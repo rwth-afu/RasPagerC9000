@@ -7,5 +7,6 @@ Authors:
 * Marvin Menzerath, Aachen
 * Christian Jansen, Aachen
 * Philipp Thiel, Aachen
+* Thomas Gatzweiler
 
 This software is released free of charge under the Creative Commons License of type "by-nc-sa". No commercial use is allowed. The software licenses of the used libs apply in any case.
