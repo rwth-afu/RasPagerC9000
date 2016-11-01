@@ -11,9 +11,9 @@ Fifo<uint8_t> fifo = Fifo<uint8_t>(512);
 
 void timer_init() {
   // Initialize timer for 1200 Hz
-	TCCR2 = (1 << WGM21) | (1 << CS22);
-	OCR2  = F_CPU / 64 / 1207;
-	TIMSK = (1 << OCIE2) | (1 << TOIE2);
+  TCCR2 = (1 << WGM21) | (1 << CS22);
+  OCR2  = F_CPU / 64 / 1207;
+  TIMSK = (1 << OCIE2) | (1 << TOIE2);
 }
 
 void ports_init() {
@@ -26,11 +26,14 @@ void ports_init() {
   INIT_OUTPUT(LED_GREEN);
   SET_OUTPUT(LED_GREEN);
 
-  INIT_OUTPUT(MDL_C9000);
-  SET_OUTPUT(MDL_C9000);
+  INIT_OUTPUT(C9000_MDL);
+  SET_OUTPUT(C9000_MDL);
 
-  INIT_OUTPUT(MDE_C9000);
-  SET_OUTPUT(MDE_C9000);
+  INIT_OUTPUT(C9000_MDE);
+  CLR_OUTPUT(C9000_MDE);
+
+  INIT_OUTPUT(C9000_PTT);
+  CLR_OUTPUT(C9000_PTT);
 
   INIT_OUTPUT(RASPI_SENDDATA);
   SET_OUTPUT(RASPI_SENDDATA);
@@ -40,17 +43,17 @@ void ports_init() {
  * Main loop
  */
 void loop() {
-  // Cancel the reception immediately if the buffer is full
+  // Stop receiving if the buffer is full
   if (fifo.full()) {
     CLR_OUTPUT(RASPI_SENDDATA);
-    return;
+  }
+  else {
+    uint8_t received_byte = UART::receive_byte();
+    fifo.push(received_byte);
   }
 
-  uint8_t received_byte = UART::receive_byte();
-  fifo.push(received_byte);
-
   // Signal the PI to stop sending data if the buffer gets close to full
-  if (fifo.free_slots() < 32) {
+  if (fifo.free_slots() < 16) {
     CLR_OUTPUT(RASPI_SENDDATA);
   }
   else {
@@ -62,21 +65,45 @@ void loop() {
  * 1200 Hz timer interrupt
  */
 ISR(TIMER2_COMP_vect) {
-  static uint8_t byte = 0;
+  static uint8_t current_byte = 0;
   static uint8_t remaining_bits = 0;
 
+  // Set PTT to High if there is data left
+  // or the Raspberry Pi wants to send
+  if (remaining_bits || GET_INPUT(RASPI_PTT) || !fifo.empty()) {
+    SET_OUTPUT(LED_RED);
+    SET_OUTPUT(C9000_PTT);
+  }
+  else {
+    CLR_OUTPUT(LED_RED);
+    CLR_OUTPUT(C9000_PTT);
+  }
+
   if (remaining_bits == 0 && !fifo.empty()) {
-    byte = fifo.pop();
+    current_byte = fifo.pop();
     remaining_bits = 8;
   }
 
   if (remaining_bits > 0) {
-    uint8_t bit = byte & (1 << remaining_bits);
-    if (bit) { CLR_OUTPUT(MDL_C9000); } else { SET_OUTPUT(MDL_C9000); }
+    uint8_t bit = current_byte & (1 << (remaining_bits - 1));
+
+    if (bit) {
+      CLR_OUTPUT(C9000_MDL);
+      SET_OUTPUT(LED_YELLOW);
+    } else {
+      SET_OUTPUT(C9000_MDL);
+      CLR_OUTPUT(LED_YELLOW);
+    }
+
+    SET_OUTPUT(C9000_MDE);
+    asm volatile("nop"); // short delay
+    CLR_OUTPUT(C9000_MDE);
+
     remaining_bits--;
   }
   else {
-    SET_OUTPUT(MDL_C9000);
+    SET_OUTPUT(C9000_MDL);
+    CLR_OUTPUT(LED_YELLOW);
   }
 }
 
