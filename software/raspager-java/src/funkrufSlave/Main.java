@@ -1,5 +1,6 @@
 package funkrufSlave;
 
+import java.awt.*;
 import java.util.Deque;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -304,7 +305,7 @@ public class Main {
         running = false;
 
         // if gui
-        if (gui) {
+        if (gui && !GraphicsEnvironment.isHeadless()) {
             // create mainWindow
             mainWindow = new MainWindow(log);
         } else {
