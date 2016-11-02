@@ -22,7 +22,7 @@ public class Config {
     private int port = 0;
     private int logLevel = Log.NORMAL;
     private String[] master = null;
-    private Baud baudRate = Baud._57600;
+    private Baud baudRate = Baud._38400;
 
     private DataSender dataSender;
 
@@ -171,16 +171,9 @@ public class Config {
     public void save(String filename) throws FileNotFoundException {
         PrintWriter writer = new PrintWriter(new File(filename));
 
-        // baue String für Baudraten
-        String baudraten = "(";
-        for (Baud b : Baud.values()) {
-            baudraten += b.getValue() + ", ";
-        }
-        baudraten = baudraten.substring(0, baudraten.length() - 2) + ")";
-
         String[] lines = {"#[slave config]", "# Port", "port=" + this.port,
                 "# Erlaubte Master; getrennt durch Leerzeichen", "master=" + masterToString(),
-                "# Baudrate " + baudraten, "baudrate=" + this.baudRate.getValue(),
+                "# Baudrate (empfohlen: 9600, 19200, 38400, 76800)", "baudrate=" + this.baudRate.getValue(),
                 "# LogLevel", "loglevel=" + this.logLevel};
 
         for (int i = 0; i < lines.length; i++) {

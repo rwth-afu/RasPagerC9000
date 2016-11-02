@@ -27,8 +27,8 @@ port=1337
 # Allowed Masters, separated by a space
 master=127.0.0.1
 
-# Baudrate (50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400)
-baudrate=57600
+# Baudrate (recommended: 9600, 19200, 38400, 76800)
+baudrate=38400
 
 # LogLevel
 # NORMAL = 0; DEBUG_CONNECTION = 1; DEBUG_SENDING = 2; DEBUG_TCP = 3;
