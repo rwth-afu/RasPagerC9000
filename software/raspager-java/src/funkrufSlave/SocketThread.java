@@ -17,7 +17,6 @@ public class SocketThread extends Thread {
 
     private Log log = null;
 
-
     // write message into log file (log level normal)
     private void log(String message, int type) {
         log(message, type, Log.DEBUG_TCP);
@@ -55,20 +54,19 @@ public class SocketThread extends Thread {
         // cancel listening (input)
         try {
             this.socket.shutdownInput();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 
     // "main"
     @Override
     public void run() {
-
         try {
             // open writer and reader
             this.pw = new PrintWriter(this.socket.getOutputStream(), true);
             this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
-            String inputBuffer = "";
+            String inputBuffer;
             // send name
             this.pw.println(Main.config.getName());
 
@@ -77,12 +75,10 @@ public class SocketThread extends Thread {
 
             // if thread is running, wait for input
             while (this.running && (inputBuffer = this.reader.readLine()) != null) {
-
                 log("SocketThread: inputBuffer# " + inputBuffer, Log.MS);
 
                 // handle received input
                 this.protocol.handle(inputBuffer, this.pw, Main.timeSlots);
-
             }
 
             // close writer, reader and socket
@@ -94,15 +90,11 @@ public class SocketThread extends Thread {
             this.running = false;
 
             log("SocketThread: connection lost", Log.COMMUNICATION);
-
         } catch (IOException e) {
-
             e.printStackTrace();
-
         }
 
         // remove thread from thread list
         Main.removeSocketThread(this);
     }
-
 }

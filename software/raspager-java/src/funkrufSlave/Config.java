@@ -83,58 +83,64 @@ public class Config {
 
                 String[] p = s.split("=");
 
-                if (p[0].equals("name")) {
-                    if (p.length > 1) {
-                        name = p[1];
-                    }
-                } else if (p[0].equals("port")) {
-                    if (p.length > 1) {
-
-                        try {
-                            this.port = Integer.parseInt(p[1]);
-                        } catch (NumberFormatException e) {
-                            this.port = DEFAULT_PORT;
-
-                            log("Port ist auf keinen gueltigen Wert gesetzt!", Log.ERROR);
-                            log("Verwende Default-Port (" + this.DEFAULT_PORT + ") ...", Log.INFO);
+                switch (p[0]) {
+                    case "name":
+                        if (p.length > 1) {
+                            name = p[1];
                         }
-                    }
-                } else if (p[0].equals("master")) {
-                    if (p.length > 1) {
-                        setMaster(p[1]);
-                    } else {
-                        log("Keine Master angegeben!", Log.INFO);
-                    }
-                } else if (p[0].equals("baudrate")) {
-                    if (p.length > 1) {
-                        Baud val = Baud.getInstance(Integer.parseInt(p[1]));
-                        if (val != null) {
-                            setBaudRate(val);
-                        } else {
-                            log("Angegebene Baudrate nicht erlaubt!", Log.INFO);
-                        }
-                    } else {
-                        log("Keine Baudrate angegeben!", Log.INFO);
-                    }
-                } else if (p[0].equals("loglevel")) {
-                    if (p.length > 1) {
-                        try {
-                            this.logLevel = Integer.parseInt(p[1]);
-                            if (!Log.correctLogLevel(this.logLevel)) {
-                                throw new NumberFormatException();
+                        break;
+                    case "port":
+                        if (p.length > 1) {
+
+                            try {
+                                this.port = Integer.parseInt(p[1]);
+                            } catch (NumberFormatException e) {
+                                this.port = DEFAULT_PORT;
+
+                                log("Port ist auf keinen gueltigen Wert gesetzt!", Log.ERROR);
+                                log("Verwende Default-Port (" + this.DEFAULT_PORT + ") ...", Log.INFO);
                             }
-                        } catch (NumberFormatException e) {
-                            // default value
-                            this.logLevel = this.DEFAULT_LOGLEVEL;
-
-                            log("LogLevel ist auf keinen gueltigen Wert gesetzt!", Log.ERROR);
-                            log("Verwende Default-LogLevel (" + DEFAULT_LOGLEVEL + ") ...", Log.INFO);
                         }
-
-                        if (this.log != null) {
-                            this.log.setLogLevel(this.logLevel);
+                        break;
+                    case "master":
+                        if (p.length > 1) {
+                            setMaster(p[1]);
+                        } else {
+                            log("Keine Master angegeben!", Log.INFO);
                         }
-                    }
+                        break;
+                    case "baudrate":
+                        if (p.length > 1) {
+                            Baud val = Baud.getInstance(Integer.parseInt(p[1]));
+                            if (val != null) {
+                                setBaudRate(val);
+                            } else {
+                                log("Angegebene Baudrate nicht erlaubt!", Log.INFO);
+                            }
+                        } else {
+                            log("Keine Baudrate angegeben!", Log.INFO);
+                        }
+                        break;
+                    case "loglevel":
+                        if (p.length > 1) {
+                            try {
+                                this.logLevel = Integer.parseInt(p[1]);
+                                if (!Log.correctLogLevel(this.logLevel)) {
+                                    throw new NumberFormatException();
+                                }
+                            } catch (NumberFormatException e) {
+                                // default value
+                                this.logLevel = this.DEFAULT_LOGLEVEL;
+
+                                log("LogLevel ist auf keinen gueltigen Wert gesetzt!", Log.ERROR);
+                                log("Verwende Default-LogLevel (" + DEFAULT_LOGLEVEL + ") ...", Log.INFO);
+                            }
+
+                            if (this.log != null) {
+                                this.log.setLogLevel(this.logLevel);
+                            }
+                        }
+                        break;
                 }
             }
 

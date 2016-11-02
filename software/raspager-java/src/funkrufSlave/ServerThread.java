@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 
 public class ServerThread extends Thread {
-
     private int port;
     private ServerSocket socket;
     private boolean running = true;
@@ -17,7 +16,6 @@ public class ServerThread extends Thread {
     private FunkrufProtocol protocol;
 
     private Log log = null;
-
 
     // write message into log file (log level normal)
     private void log(String message, int type) {
@@ -47,7 +45,6 @@ public class ServerThread extends Thread {
 
         // create funkruf protocol with given messageQueue
         this.protocol = new FunkrufProtocol(messageQueue, this.log);
-
     }
 
     // set port
@@ -61,7 +58,6 @@ public class ServerThread extends Thread {
 
     // halt server
     public void halt() {
-
         // set running to false
         this.running = false;
 
@@ -76,11 +72,9 @@ public class ServerThread extends Thread {
                 // close socket
                 this.socket.close();
             }
-
         } catch (IOException e) {
             //log("ServerThread: accept abgebrochen");
         }
-
     }
 
     // remove thread from thread list
@@ -99,11 +93,9 @@ public class ServerThread extends Thread {
     // "main"
     @Override
     public void run() {
-
         try {
             // open socket and listen on port
             this.socket = new ServerSocket(this.port);
-
         } catch (IOException e) {
             // there was an error (port is busy)
             log("ServerThread: Port " + this.port + " could not been initialized!", Log.ERROR, Log.NORMAL);
@@ -122,20 +114,17 @@ public class ServerThread extends Thread {
 
         // as long as server is running
         while (this.running) {
-
             Socket tmpSocket = null;
 
             try {
                 // wait for client
                 tmpSocket = this.socket.accept();
-
             } catch (SocketException e) {
                 // occures when halting server
                 return;
             } catch (IOException e) {
                 // there was an error
                 log("ServerThread: Error socket.accept()", Log.ERROR, Log.NORMAL);
-
             }
 
             // is there a client?
@@ -163,7 +152,6 @@ public class ServerThread extends Thread {
                         // close writer and socket
                         pw.close();
                         tmpSocket.close();
-
                     } catch (IOException e) {
                         // there was an error
                         log("ServerThread: tmpSocket.close()# IOException", Log.ERROR);
@@ -178,7 +166,6 @@ public class ServerThread extends Thread {
 
                 // add thread to thread list
                 this.threads.add(thread);
-
             }
         }
 

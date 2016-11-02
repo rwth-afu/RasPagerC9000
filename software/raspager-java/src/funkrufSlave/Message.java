@@ -11,7 +11,6 @@ public class Message {
 
     private ArrayList<Integer> codeWords; // 0 = framePos, 1 = cw, 2 = cw, 3 = ....
 
-
     // constructor
     public Message(String[] parts) {
         this.type = parts[0].charAt(4) - '0';
@@ -73,10 +72,8 @@ public class Message {
                 this.codeWords = Pocsag.encodeNum(this.address, this.function, this.text);
 
                 return true;
-
             case 6:
                 // alpha numeric
-
                 this.codeWords = Pocsag.encodeStr(this.address, this.function, this.text);
 
                 return true;

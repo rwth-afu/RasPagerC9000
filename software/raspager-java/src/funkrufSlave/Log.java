@@ -27,19 +27,15 @@ public class Log {
 
     private boolean cmdOutput = false;
 
-
     // constructor
     public Log(String logFile) {
         this.logFile = logFile;
         this.logLevel = NORMAL;
 
         if (logFile != null && !logFile.equals("")) {
-
             try {
-
                 this.writer = new PrintWriter(new FileWriter(this.logFile, true), true);
                 println("Logging gestartet...", INFO);
-
             } catch (IOException e) {
                 println("LogFile konnte nicht erstellt werden!", ERROR);
             }
@@ -78,19 +74,16 @@ public class Log {
 
             String time = (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).format(new Date());
 
-
             if (this.cmdOutput) {
                 System.out.printf("%2s: %s %s", types[type], time, message);
                 System.out.println();
             }
-
 
             if (this.writer != null) {
                 this.writer.printf("%2s: %s %s", types[type], time, message);
                 this.writer.println();
             }
         }
-
     }
 
     // set log level

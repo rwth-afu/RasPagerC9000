@@ -52,8 +52,8 @@ public class Main {
         int loglevel = -1;
         boolean verbose = false;
 
-        for (int i = 0; i < args.length; i++) {
-            String[] parts = args[i].split("=");
+        for (String arg : args) {
+            String[] parts = arg.split("=");
 
             // parameter -nogui
             if (parts[0].equals("-nogui")) {
@@ -64,11 +64,9 @@ public class Main {
             }
             // parameter -logfile=...
             else if (parts[0].equals("-logfile") && parts.length == 2) {
-
                 // logfile
                 log("Parameter: logFile", Log.INFO);
                 logfile = parts[1];
-
             }
             // parameter -loglevel=
             else if (parts[0].equals("-loglevel") && parts.length == 2) {
@@ -82,11 +80,9 @@ public class Main {
             }
             // parameter -configfile=...
             else if (parts[0].equals("-configfile") && parts.length == 2) {
-
                 // config file
                 log("Parameter: configFile", Log.INFO);
                 configfile = parts[1];
-
             }
             // parameter -v or -verbose
             else if (parts[0].equals("-v") || parts[0].equals("-verbose")) {
@@ -107,9 +103,8 @@ public class Main {
             }
             // invalid parameter
             else {
-                log("Parameter: Invalid # " + args[i], Log.ERROR);
+                log("Parameter: Invalid # " + arg, Log.ERROR);
             }
-
         }
 
         if (!logfile.equals("") || verbose) {

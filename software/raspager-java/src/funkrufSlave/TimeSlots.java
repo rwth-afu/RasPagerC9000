@@ -6,7 +6,6 @@ public class TimeSlots {
     // last slot
     private char lastSlot = ' ';
 
-
     // constructor
     public TimeSlots() {
         // create boolean array
@@ -28,7 +27,6 @@ public class TimeSlots {
         int count = 0;
         // char interpreted as hex to int
         int iSlot = Integer.parseInt(cSlot + "", 16);
-
 
         for (int slot = iSlot; this.slots[slot % 16] && slot < iSlot + 16; slot++) {
             // count allowed slots
@@ -65,7 +63,6 @@ public class TimeSlots {
     public char getCurrentSlot(int time) {
         // getCurrentSlotInt and convert int to char in hex format
         return String.format("%1x", getCurrentSlotInt(time)).charAt(0);
-
     }
 
     // get current slot as int by time
@@ -82,5 +79,4 @@ public class TimeSlots {
     public boolean isLastSlot(char cSlot) {
         return this.lastSlot == cSlot;
     }
-
 }

@@ -61,7 +61,6 @@ public class Pocsag {
         crc = cw;
         d = 0xed200000;
 
-
         for (m = 0x80000000; (m & 0x400) == 0; m >>>= 1) {
             // m ist Bitmaske mit nur einer 1, die vom MSB bis vor den Anfang des (CRC+Praität) bereichs läuft, d.h. bis Bit 11 einschl.
             if ((crc & m) != 0)
@@ -73,7 +72,6 @@ public class Pocsag {
         cw |= crc;
 
         // parity
-
         p = (char) (((cw >>> 24) & 0xff) ^
                 ((cw >>> 16) & 0xff) ^
                 ((cw >>> 8) & 0xff) ^
@@ -84,20 +82,15 @@ public class Pocsag {
         p ^= (p >>> 1);
         p &= 0x01;
 
-
         return cw | p;
     }
 
     public static int encodeACW(int addr, int func) {
-
         return (((addr & 0x001ffff8) << 10) | ((func & 0x00000003) << 11));
-
     }
 
     public static int encodeMCW(int msg) {
-
         return (0x80000000 | ((msg & 0x000fffff) << 11));
-
     }
 
     public static char encodeChar(char ch) {
@@ -116,16 +109,12 @@ public class Pocsag {
         switch (ch) {
             case ' ':
                 return 0x03;
-
             case 'U':
                 return 0x0d;
-
             case '_':
                 return 0x0b;
-
             case '[':
                 return 0x0f;
-
             case ']':
                 return 0x07;
         }
@@ -218,5 +207,4 @@ public class Pocsag {
 
         return cwBuf;
     }
-
 }

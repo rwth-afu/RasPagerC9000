@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 public class Scheduler extends TimerTask {
-    //
     protected int time = 0x0000;
     protected int delay = 0;
 
@@ -13,7 +12,7 @@ public class Scheduler extends TimerTask {
 
     // max time value
     protected final int max = (int) (Math.pow(2, 16));
-//	protected final int [] maxBatch = {0, 7, 15, 23, 32, 40, 48, 56, 65, 65, 65, 65, 65, 65, 65, 65, 65};
+    // protected final int [] maxBatch = {0, 7, 15, 23, 32, 40, 48, 56, 65, 65, 65, 65, 65, 65, 65, 65, 65};
 
     // send time (countdown)
     protected double sendTime = 0.0;
@@ -23,9 +22,7 @@ public class Scheduler extends TimerTask {
     // data list (codewords)
     protected ArrayList<Integer> data;
 
-
     protected Log log = null;
-
 
     // write message into log file (log level normal)
     protected void log(String message, int type) {
@@ -93,8 +90,6 @@ public class Scheduler extends TimerTask {
             Main.config.getDataSender().send(data);
             data = null;
         }
-
-
     }
 
     // get data depending on slot count
@@ -198,6 +193,5 @@ public class Scheduler extends TimerTask {
     // correct time by delay
     public void correctTime(int delay) {
         this.delay += delay;
-
     }
 }
