@@ -87,7 +87,7 @@ ISR(TIMER2_COMP_vect) {
   if (remaining_bits > 0) {
     uint8_t bit = current_byte & (1 << (remaining_bits - 1));
 
-    if (bit) {
+    if ((!INVERT_BITS && bit) || (INVERT_BITS && !bit)) {
       CLR_OUTPUT(C9000_MDL);
       SET_OUTPUT(LED_YELLOW);
     } else {
