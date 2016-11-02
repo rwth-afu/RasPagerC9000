@@ -27,7 +27,7 @@ public class DataSender {
 
         this.serial = SerialFactory.createInstance();
         try {
-            serial.open(new SerialConfig().device(SerialPort.getDefaultPort()).baud(Baud._57600).parity(Parity.NONE).stopBits(StopBits._1));
+            serial.open(new SerialConfig().device(SerialPort.getDefaultPort()).baud(Main.config.getBaudRate()).parity(Parity.NONE).stopBits(StopBits._1));
         } catch (UnsupportedBoardType | IOException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,7 @@
 package funkrufSlave;
 
+import com.pi4j.io.serial.Baud;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -20,6 +22,7 @@ public class Config {
     private int port = 0;
     private int logLevel = Log.NORMAL;
     private String[] master = null;
+    private Baud baudRate = Baud._57600;
 
     private DataSender dataSender;
 
@@ -40,7 +43,6 @@ public class Config {
 
     public void setLog(Log log) {
         this.log = log;
-
         this.log.setLogLevel(this.logLevel);
     }
 
@@ -49,11 +51,9 @@ public class Config {
     }
 
     private void log(String message, int type, int logLevel) {
-
         if (this.log != null) {
             this.log.println(message, type, logLevel);
         }
-
     }
 
     public void load(String filename) throws InvalidConfigFileException {
@@ -85,33 +85,36 @@ public class Config {
 
                 if (p[0].equals("name")) {
                     if (p.length > 1) {
-
                         name = p[1];
-
                     }
                 } else if (p[0].equals("port")) {
-
                     if (p.length > 1) {
 
                         try {
                             this.port = Integer.parseInt(p[1]);
                         } catch (NumberFormatException e) {
-
                             this.port = DEFAULT_PORT;
 
                             log("Port ist auf keinen gueltigen Wert gesetzt!", Log.ERROR);
                             log("Verwende Default-Port (" + this.DEFAULT_PORT + ") ...", Log.INFO);
-
                         }
-
                     }
-
                 } else if (p[0].equals("master")) {
                     if (p.length > 1) {
                         setMaster(p[1]);
                     } else {
-
                         log("Keine Master angegeben!", Log.INFO);
+                    }
+                } else if (p[0].equals("baudrate")) {
+                    if (p.length > 1) {
+                        Baud val = Baud.getInstance(Integer.parseInt(p[1]));
+                        if (val != null) {
+                            setBaudRate(val);
+                        } else {
+                            log("Angegebene Baudrate nicht erlaubt!", Log.INFO);
+                        }
+                    } else {
+                        log("Keine Baudrate angegeben!", Log.INFO);
                     }
                 } else if (p[0].equals("loglevel")) {
                     if (p.length > 1) {
@@ -162,9 +165,17 @@ public class Config {
     public void save(String filename) throws FileNotFoundException {
         PrintWriter writer = new PrintWriter(new File(filename));
 
+        // baue String für Baudraten
+        String baudraten = "(";
+        for (Baud b : Baud.values()) {
+            baudraten += b.getValue() + ", ";
+        }
+        baudraten = baudraten.substring(0, baudraten.length() - 2) + ")";
+
         String[] lines = {"#[slave config]", "# Port", "port=" + this.port,
-                "# Erlaubte Master getrennt durch Leerzeichen", "master=" + masterToString(), "# LogLevel",
-                "loglevel=" + this.logLevel};
+                "# Erlaubte Master; getrennt durch Leerzeichen", "master=" + masterToString(),
+                "# Baudrate " + baudraten, "baudrate=" + this.baudRate.getValue(),
+                "# LogLevel", "loglevel=" + this.logLevel};
 
         for (int i = 0; i < lines.length; i++) {
             writer.println(lines[i]);
@@ -203,6 +214,14 @@ public class Config {
         this.port = port;
     }
 
+    public Baud getBaudRate() {
+        return this.baudRate;
+    }
+
+    public void setBaudRate(Baud baudRate) {
+        this.baudRate = baudRate;
+    }
+
     public int getLogLevel() {
         return this.logLevel;
     }
@@ -229,28 +248,19 @@ public class Config {
         int len = 0;
 
         for (int i = 0; i < p.length; i++) {
-
             try {
-
                 String ip = InetAddress.getByName(p[i]).getHostAddress();
 
                 if (i > Arrays.asList(p).indexOf(p[i])) {
-
                     log("Doppelter Master: " + p[i], Log.INFO);
                     p[i] = "";
-
                 } else {
-
                     p[i] = ip;
                     len++;
-
                 }
-
             } catch (UnknownHostException e) {
-
                 log("Unbekannter Host: " + p[i], Log.ERROR);
                 p[i] = "";
-
             }
         }
 
@@ -270,7 +280,6 @@ public class Config {
         if (this.master == null) {
             return true;
         }
-
         return Arrays.asList(master).contains(ip);
     }
 
@@ -309,6 +318,7 @@ public class Config {
 
         s += "port=" + this.port + "\n";
         s += "master=" + masterToString() + "\n";
+        s += "baudrate=" + this.baudRate + "\n";
         s += "loglevel=" + this.logLevel + "\n";
 
         return s;
