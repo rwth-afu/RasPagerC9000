@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class DataSender {
     private Serial serial;
     private GpioController gpio;
+    private GpioPinDigitalOutput pinAvr;
     private GpioPinDigitalOutput pinPtt;
     private GpioPinDigitalInput pinSenddata;
 
@@ -33,8 +34,15 @@ public class DataSender {
         }
 
         this.gpio = GpioFactory.getInstance();
+
+        this.pinAvr = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "AVR_RasPi", PinState.HIGH);
+        this.pinAvr.setShutdownOptions(true, PinState.LOW);
+
         this.pinPtt = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "PTT_RasPi", PinState.LOW);
+        this.pinPtt.setShutdownOptions(true, PinState.LOW);
+
         this.pinSenddata = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, "SENDDATA", PinPullResistance.PULL_DOWN);
+        this.pinSenddata.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
 
         System.out.println("DataSender initialisiert.");
     }
@@ -107,7 +115,7 @@ public class DataSender {
      * @param data ArrayList mit Integer-Werten
      * @return Integer-Werte in Byte-Array
      */
-    public static byte[] getByteData(ArrayList<Integer> data) {
+    private static byte[] getByteData(ArrayList<Integer> data) {
         byte[] byteData = new byte[data.size() * 4];
 
         for (int i = 0; i < data.size(); i++) {
