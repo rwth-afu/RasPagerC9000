@@ -6,6 +6,9 @@
 // Recommended values: 9600, 19200, 38400, 76800
 #define UART_BAUDRATE 38400
 
+// Invert each bit before transmitting
+#define INVERT_BITS false
+
 // LED_RED -> This pin drives the red LED
 #define LED_RED_DDR         DDRB
 #define LED_RED_PORT        PORTB
