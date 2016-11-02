@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Deque;
 
 public class ServerThread extends Thread {
 		
@@ -33,7 +34,7 @@ public class ServerThread extends Thread {
 	}
 	
 	// constructor
-	public ServerThread(int port, MessageQueue messageQueue, Log log) {
+	public ServerThread(int port, Deque<Message> messageQueue, Log log) {
 		super("ServerThread");
 		
 		this.log = log;

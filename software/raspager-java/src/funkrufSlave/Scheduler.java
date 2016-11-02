@@ -133,7 +133,7 @@ public class Scheduler extends TimerTask {
 			// if count of batches + this message is greater than max batches
 			if(((data.size() - 18) / 17 + (cwCount + 2 * framePos) / 16 + 1) > maxBatch) {
 				// push message back in queue (first position)
-				Main.messageQueue.pushFirst(message);
+				Main.messageQueue.addFirst(message);
 				break;
 			}
 			
