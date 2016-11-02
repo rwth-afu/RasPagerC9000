@@ -33,13 +33,11 @@ public class Main {
     }
 
     private static void printHelp() {
-        System.out.println(
-                "syntax: FunkrufSlave.jar [-nogui] [-logfile=logfile] [-configfile=configfile] [-v] [-loglevel=loglevel]");
+        System.out.println("syntax: FunkrufSlave.jar [-nogui] [-logfile=logfile] [-configfile=configfile] [-v] [-loglevel=loglevel]");
         System.out.println("-nogui\t\t\tConsole only, no gui");
         System.out.println("-logfile=logfile\tWrite log information into logfile");
         System.out.println("-configfile=configfile\tLoad given configfile and use it");
-        System.out.println(
-                "-v, -verbose\t\tWrite log information to console (if in combination with -logfile, log information will be written to logfile AND console)");
+        System.out.println("-v, -verbose\t\tWrite log information to console (if in combination with -logfile, log information will be written to logfile AND console)");
         System.out.println("-loglevel=loglevel\tOverwrite loglevel with the given one");
     }
 
@@ -56,21 +54,13 @@ public class Main {
         for (String arg : args) {
             String[] parts = arg.split("=");
 
-            // parameter -nogui
             if (parts[0].equals("-nogui")) {
-
                 log("Parameter: nogui", Log.INFO);
                 gui = false;
-
-            }
-            // parameter -logfile=...
-            else if (parts[0].equals("-logfile") && parts.length == 2) {
-                // logfile
+            } else if (parts[0].equals("-logfile") && parts.length == 2) {
                 log("Parameter: logFile", Log.INFO);
                 logfile = parts[1];
-            }
-            // parameter -loglevel=
-            else if (parts[0].equals("-loglevel") && parts.length == 2) {
+            } else if (parts[0].equals("-loglevel") && parts.length == 2) {
                 log("Parameter: loglevel", Log.INFO);
                 try {
                     loglevel = Integer.parseInt(parts[1]);
@@ -78,32 +68,20 @@ public class Main {
                     log("Loglevel hat kein gültiges Format!", Log.ERROR);
                     loglevel = -1;
                 }
-            }
-            // parameter -configfile=...
-            else if (parts[0].equals("-configfile") && parts.length == 2) {
-                // config file
+            } else if (parts[0].equals("-configfile") && parts.length == 2) {
                 log("Parameter: configFile", Log.INFO);
                 configfile = parts[1];
-            }
-            // parameter -v or -verbose
-            else if (parts[0].equals("-v") || parts[0].equals("-verbose")) {
+            } else if (parts[0].equals("-v") || parts[0].equals("-verbose")) {
                 log("Parameter: verbose", Log.INFO);
                 verbose = true;
-            }
-            // version
-            else if (parts[0].equals("-version")) {
+            } else if (parts[0].equals("-version")) {
                 System.out.println("FunkrufSlave - Version " + VERSION);
 
                 System.exit(0);
-            }
-            // help
-            else if (parts[0].equals("--help") || parts[0].equals("-help") || parts[0].equals("-h")) {
+            } else if (parts[0].equals("--help") || parts[0].equals("-help") || parts[0].equals("-h")) {
                 printHelp();
-
                 System.exit(0);
-            }
-            // invalid parameter
-            else {
+            } else {
                 log("Parameter: Invalid # " + arg, Log.ERROR);
             }
         }
@@ -119,8 +97,7 @@ public class Main {
                 log(e.getMessage(), Log.ERROR);
             }
         } else if (!gui) {
-            System.out.println(
-                    "Damit der FunkrufSlave ohne GUI gestartet werden kann, muss eine Konfigurationsdatei angegeben werden! -configfile=/foo/bar");
+            System.out.println("Damit der FunkrufSlave ohne GUI gestartet werden kann, muss eine Konfigurationsdatei angegeben werden! -configfile=/foo/bar");
             System.exit(1);
         }
 
@@ -283,8 +260,7 @@ public class Main {
     // main
     public static void main(String[] args) {
         // write name, version and authors
-        System.out.println("RasPager C9000 - Version " + VERSION
-                + "\nby Ralf Wilke, Michael Delissen und Marvin Menzerath, powered by IHF RWTH Aachen\nNew Versions at https://github.com/rwth-afu/RasPagerC9000/releases\n");
+        System.out.println("RasPager C9000 - Version " + VERSION + "\nby Ralf Wilke, Michael Delissen und Marvin Menzerath, powered by IHF RWTH Aachen\nNew Versions at https://github.com/rwth-afu/RasPagerC9000/releases\n");
 
         // parse arguments
         parseArguments(args);
