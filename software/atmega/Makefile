@@ -29,7 +29,7 @@ $(MAIN).elf: $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ -c $^
 
 clean:
-	rm -r $(OBJ) $(MAIN).elf $(MAIN).hex
+	rm -f $(OBJ) $(MAIN).elf $(MAIN).hex
 
 program: $(MAIN).hex
 	sudo $(AVRDUDE) $(AVRDUDEFLAGS) -U flash:w:$(MAIN).hex

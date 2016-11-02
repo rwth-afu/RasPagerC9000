@@ -1,7 +1,10 @@
 #pragma once
 
+#include <stdint.h>
+
 /**
  * First in/first out circular buffer
+ * Thread-safe for a single producer/single consumer scenario
  *
  * @author Thomas Gatzweiler, DL2IC
  */
@@ -17,27 +20,27 @@ public:
   /**
    * Returns the number of elements that are currently stored in the buffer.
    */
-  unsigned int count();
+  unsigned int getCount();
 
   /**
    * Returns the maximum number of elements that can be stored in the buffer.
    */
-  unsigned int size();
+  unsigned int getSize();
 
   /**
    * Returns the number of slots remaining until the buffer is full.
    */
-  unsigned int free_slots();
+  unsigned int getFreeSlots();
 
   /**
    * Returns `true` if the buffer is full.
    */
-  bool full();
+  bool isFull();
 
   /**
    * Returns `true` if the buffer is empty.
    */
-  bool empty();
+  bool isEmpty();
 
   /**
    * Appends a new element at the end of the buffer.
@@ -50,6 +53,8 @@ public:
   T pop();
 
 private:
-  T* _buffer;
-  unsigned int _size, _head, _tail;
+  T* buffer;
+  uint16_t size;
+  volatile uint16_t head;
+  volatile uint16_t tail;
 };

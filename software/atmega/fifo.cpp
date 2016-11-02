@@ -1,67 +1,83 @@
 #include "fifo.h"
-#include <stdint.h>
 #include <stdlib.h>
+#include <util/atomic.h>
 
 template <typename T>
-Fifo<T>::Fifo(unsigned int size) {
-  _buffer = (T*)malloc(size * sizeof(T));
-  _size = size;
-  _head = _tail = 0;
+Fifo<T>::Fifo(uint16_t size) {
+  this->buffer = (T*)malloc(size * sizeof(T));
+  this->size = size;
+  this->head = this->tail = 0;
 }
 
 template <typename T>
 Fifo<T>::~Fifo() {
-  free(_buffer);
+  free(this->buffer);
 }
 
 template <typename T>
-unsigned int Fifo<T>::count() {
-  if (_head <= _tail) {
-    return (_head + _size) - _tail;
+uint16_t Fifo<T>::getCount() {
+  uint16_t current_head, current_tail;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    current_head = this->head;
+    current_tail = this->tail;
+  }
+
+  if (current_head <= current_tail) {
+    return (current_head + this->size) - current_tail;
   }
   else {
-    return _head - _tail;
+    return current_head - current_tail;
   }
+
 }
 
 template <typename T>
-unsigned int Fifo<T>::size() {
-  return _size;
+uint16_t Fifo<T>::getSize() {
+  return this->size;
 }
 
 template <typename T>
-unsigned int Fifo<T>::free_slots() {
-  return _size - count() - 1;
+uint16_t Fifo<T>::getFreeSlots() {
+  return this->size - this->getCount() - 1;
 }
 
 template <typename T>
-bool Fifo<T>::full() {
-  return ((_head + 1) % _size) == _tail;
+bool Fifo<T>::isFull() {
+  uint16_t current_head, current_tail;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    current_head = this->head;
+    current_tail = this->tail;
+  }
+
+  return ((current_head + 1) % this->size) == current_tail;
 }
 
 template <typename T>
-bool Fifo<T>::empty() {
-  return _head == _tail;
+bool Fifo<T>::isEmpty() {
+  bool result;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    result = this->head == this->tail;
+  }
+
+  return result;
 }
 
 template <typename T>
 void Fifo<T>::push(T value) {
-  unsigned int next = _head + 1 % _size;
-
-  if (next == _tail) {
-    // ERROR: Full buffer
+  if (!this->isFull()) {
+    this->buffer[this->head] = value;
+    this->head = this->head + 1 % this->size;
   }
   else {
-    _buffer[_head] = value;
-    _head = next;
+    // ERROR: Full buffer
   }
 }
 
 template <typename T>
 T Fifo<T>::pop() {
-  if (!empty()) {
-    T value = _buffer[_tail];
-    _tail = _tail + 1 % _size;
+  if (!this->isEmpty()) {
+    T value = this->buffer[this->tail];
+    this->tail = this->tail + 1 % this->size;
     return value;
   }
   else {

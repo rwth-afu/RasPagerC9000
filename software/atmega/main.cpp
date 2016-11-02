@@ -7,7 +7,7 @@
 #include "uart.h"
 #include "fifo.h"
 
-Fifo<uint8_t> fifo = Fifo<uint8_t>(512);
+Fifo<uint8_t> fifo = Fifo<uint8_t>(256);
 
 void timer_init() {
   // Initialize timer for 1200 Hz
@@ -43,21 +43,23 @@ void ports_init() {
  * Main loop
  */
 void loop() {
+  uint16_t free_slots = fifo.getFreeSlots();
+
   // Stop receiving if the buffer is full
-  if (fifo.full()) {
+  if (!free_slots) {
     CLR_OUTPUT(RASPI_SENDDATA);
   }
   else {
+    // Signal the PI to stop sending data if the buffer gets close to full
+    if (free_slots < 16) {
+      CLR_OUTPUT(RASPI_SENDDATA);
+    }
+    else {
+      SET_OUTPUT(RASPI_SENDDATA);
+    }
+
     uint8_t received_byte = UART::receive_byte();
     fifo.push(received_byte);
-  }
-
-  // Signal the PI to stop sending data if the buffer gets close to full
-  if (fifo.free_slots() < 16) {
-    CLR_OUTPUT(RASPI_SENDDATA);
-  }
-  else {
-    SET_OUTPUT(RASPI_SENDDATA);
   }
 }
 
@@ -68,9 +70,11 @@ ISR(TIMER2_COMP_vect) {
   static uint8_t current_byte = 0;
   static uint8_t remaining_bits = 0;
 
+  bool fifo_empty = fifo.isEmpty();
+
   // Set PTT to High if there is data left
   // or the Raspberry Pi wants to send
-  if (remaining_bits || GET_INPUT(RASPI_PTT) || !fifo.empty()) {
+  if (remaining_bits || !fifo_empty || GET_INPUT(RASPI_PTT)) {
     SET_OUTPUT(LED_RED);
     SET_OUTPUT(C9000_PTT);
   }
@@ -79,7 +83,7 @@ ISR(TIMER2_COMP_vect) {
     CLR_OUTPUT(C9000_PTT);
   }
 
-  if (remaining_bits == 0 && !fifo.empty()) {
+  if (remaining_bits == 0 && !fifo_empty) {
     current_byte = fifo.pop();
     remaining_bits = 8;
   }
@@ -102,7 +106,9 @@ ISR(TIMER2_COMP_vect) {
     remaining_bits--;
   }
   else {
-    SET_OUTPUT(C9000_MDL);
+    if (INVERT_BITS) { SET_OUTPUT(C9000_MDL); }
+    else { CLR_OUTPUT(C9000_MDL); }
+
     CLR_OUTPUT(LED_YELLOW);
   }
 }
