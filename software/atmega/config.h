@@ -3,6 +3,7 @@
 // CPU Frequency
 #define F_CPU 8000000
 
+// Recommended values: 9600, 19200, 38400, 76800
 #define UART_BAUDRATE 38400
 
 // LED_RED -> This pin drives the red LED
