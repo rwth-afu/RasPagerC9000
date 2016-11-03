@@ -106,9 +106,7 @@ ISR(TIMER2_COMP_vect) {
     remaining_bits--;
   }
   else {
-    if (INVERT_BITS) { SET_OUTPUT(C9000_MDL); }
-    else { CLR_OUTPUT(C9000_MDL); }
-
+    SET_OUTPUT(C9000_MDL);
     CLR_OUTPUT(LED_YELLOW);
   }
 }
