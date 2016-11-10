@@ -13,117 +13,117 @@ import java.util.ArrayList;
  * @author menzerath
  */
 public class DataSender {
-    private Serial serial;
-    private GpioController gpio;
-    private GpioPinDigitalOutput pinAvr;
-    private GpioPinDigitalOutput pinPtt;
-    private GpioPinDigitalInput pinSenddata;
+	private Serial serial;
+	private GpioController gpio;
+	private GpioPinDigitalOutput pinAvr;
+	private GpioPinDigitalOutput pinPtt;
+	private GpioPinDigitalInput pinSenddata;
 
-    /**
-     * Konstruktor.
-     * Initialisiert die serielle Schnittstelle mit passenden Konfigurationswerten, die GPIO-Schnittstelle und die verwendeten GPIO-Pins.
-     */
-    public DataSender() {
-        System.out.println("Initialisiere DataSender...");
+	/**
+	 * Konstruktor.
+	 * Initialisiert die serielle Schnittstelle mit passenden Konfigurationswerten, die GPIO-Schnittstelle und die verwendeten GPIO-Pins.
+	 */
+	public DataSender() {
+		System.out.println("Initialisiere DataSender...");
 
-        this.serial = SerialFactory.createInstance();
-        try {
-            serial.open(new SerialConfig().device(SerialPort.getDefaultPort()).baud(Main.config.getBaudRate()).parity(Parity.NONE).stopBits(StopBits._1));
-        } catch (UnsupportedBoardType | IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+		this.serial = SerialFactory.createInstance();
+		try {
+			serial.open(new SerialConfig().device(SerialPort.getDefaultPort()).baud(Main.config.getBaudRate()).parity(Parity.NONE).stopBits(StopBits._1));
+		} catch (UnsupportedBoardType | IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
 
-        this.gpio = GpioFactory.getInstance();
+		this.gpio = GpioFactory.getInstance();
 
-        this.pinAvr = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "AVR_RasPi", PinState.HIGH);
-        this.pinAvr.setShutdownOptions(true, PinState.LOW);
+		this.pinAvr = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "AVR_RasPi", PinState.HIGH);
+		this.pinAvr.setShutdownOptions(true, PinState.LOW);
 
-        this.pinPtt = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "PTT_RasPi", PinState.LOW);
-        this.pinPtt.setShutdownOptions(true, PinState.LOW);
+		this.pinPtt = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "PTT_RasPi", PinState.LOW);
+		this.pinPtt.setShutdownOptions(true, PinState.LOW);
 
-        this.pinSenddata = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, "SENDDATA", PinPullResistance.PULL_DOWN);
-        this.pinSenddata.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+		this.pinSenddata = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, "SENDDATA", PinPullResistance.PULL_DOWN);
+		this.pinSenddata.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
 
-        System.out.println("DataSender initialisiert.");
-    }
+		System.out.println("DataSender initialisiert.");
+	}
 
-    /**
-     * Sendet die übergebenen Daten über die serielle Schnittstelle.
-     * Setzt dabei die passenden Pins und wartet auf einen freien Buffer an der Gegenstelle.
-     *
-     * @param inputData zu übertragende Daten
-     */
-    public void send(byte[] inputData) {
-        System.out.println("Sende Daten...");
+	/**
+	 * Sendet die übergebenen Daten über die serielle Schnittstelle.
+	 * Setzt dabei die passenden Pins und wartet auf einen freien Buffer an der Gegenstelle.
+	 *
+	 * @param inputData zu übertragende Daten
+	 */
+	public void send(byte[] inputData) {
+		System.out.println("Sende Daten...");
 
-        // PTT (Pin 13, bzw 2) auf HIGH
-        this.pinPtt.high();
+		// PTT (Pin 13, bzw 2) auf HIGH
+		this.pinPtt.high();
 
-        // Warte 1ms
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+		// Warte 1ms
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-        // durch alle Bytes im Array loopen
-        for (int i = 0; i < inputData.length; i++) {
-            // SENDDATA (Pin 15, bzw 3) auslesen
-            if (this.pinSenddata.isHigh()) {
-                // HIGH -> Nächstes Byte senden
-                System.out.println("Sende nächstes Byte...");
+		// durch alle Bytes im Array loopen
+		for (int i = 0; i < inputData.length; i++) {
+			// SENDDATA (Pin 15, bzw 3) auslesen
+			if (this.pinSenddata.isHigh()) {
+				// HIGH -> Nächstes Byte senden
+				System.out.println("Sende nächstes Byte...");
 
-                try {
-                    this.serial.write(inputData[i]);
-                } catch (IllegalStateException | IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // LOW -> Buffer voll -> Warten und erneut versuchen
-                System.out.println("Buffer voll. Warte...");
+				try {
+					this.serial.write(inputData[i]);
+				} catch (IllegalStateException | IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				// LOW -> Buffer voll -> Warten und erneut versuchen
+				System.out.println("Buffer voll. Warte...");
 
-                // Schritt wiederholen
-                i--;
+				// Schritt wiederholen
+				i--;
 
-                // Warte 1ms
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+				// Warte 1ms
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-        // PTT auf LOW
-        this.pinPtt.low();
+		// PTT auf LOW
+		this.pinPtt.low();
 
-        System.out.println("Daten gesendet.");
-    }
+		System.out.println("Daten gesendet.");
+	}
 
-    /**
-     * Wandelt die übergebene ArrayList mit Integern in ein Byte-Array um, um es anschließend der send-Funktion zu übergeben.
-     *
-     * @param inputData zu übertragende Daten
-     */
-    public void send(ArrayList<Integer> inputData) {
-        send(getByteData(inputData));
-    }
+	/**
+	 * Wandelt die übergebene ArrayList mit Integern in ein Byte-Array um, um es anschließend der send-Funktion zu übergeben.
+	 *
+	 * @param inputData zu übertragende Daten
+	 */
+	public void send(ArrayList<Integer> inputData) {
+		send(getByteData(inputData));
+	}
 
-    /**
-     * Wandelt eine übergebene ArrayList mit Integern in ein Byte-Array um und gibt dieses zurück.
-     *
-     * @param data ArrayList mit Integer-Werten
-     * @return Integer-Werte in Byte-Array
-     */
-    private static byte[] getByteData(ArrayList<Integer> data) {
-        byte[] byteData = new byte[data.size() * 4];
+	/**
+	 * Wandelt eine übergebene ArrayList mit Integern in ein Byte-Array um und gibt dieses zurück.
+	 *
+	 * @param data ArrayList mit Integer-Werten
+	 * @return Integer-Werte in Byte-Array
+	 */
+	private static byte[] getByteData(ArrayList<Integer> data) {
+		byte[] byteData = new byte[data.size() * 4];
 
-        for (int i = 0; i < data.size(); i++) {
-            for (int c = 0; c < 4; c++) {
-                byteData[i * 4 + c] = (byte) (data.get(i) >>> (8 * (3 - c)));
-            }
-        }
+		for (int i = 0; i < data.size(); i++) {
+			for (int c = 0; c < 4; c++) {
+				byteData[i * 4 + c] = (byte) (data.get(i) >>> (8 * (3 - c)));
+			}
+		}
 
-        return byteData;
-    }
+		return byteData;
+	}
 }
