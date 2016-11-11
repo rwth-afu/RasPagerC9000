@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <util/atomic.h>
 
+uint16_t global_buffer[256];
+
 template <typename T>
 Fifo<T>::Fifo(uint16_t size) {
-  this->buffer = (T*)malloc(size * sizeof(T));
-  this->size = size;
+  //this->buffer = (T*)malloc(size * sizeof(T));
+  this->buffer = (T*)global_buffer;
+  //this->size = size;
+  this->size = sizeof(global_buffer)/sizeof(T);
   this->head = this->tail = 0;
 }
 
@@ -22,7 +26,7 @@ uint16_t Fifo<T>::getCount() {
     current_tail = this->tail;
   }
 
-  if (current_head <= current_tail) {
+  if (current_head < current_tail) {
     return (current_head + this->size) - current_tail;
   }
   else {
@@ -66,7 +70,7 @@ template <typename T>
 void Fifo<T>::push(T value) {
   if (!this->isFull()) {
     this->buffer[this->head] = value;
-    this->head = this->head + 1 % this->size;
+    this->head = (this->head + 1) % this->size;
   }
   else {
     // ERROR: Full buffer
@@ -77,7 +81,7 @@ template <typename T>
 T Fifo<T>::pop() {
   if (!this->isEmpty()) {
     T value = this->buffer[this->tail];
-    this->tail = this->tail + 1 % this->size;
+    this->tail = (this->tail + 1) % this->size;
     return value;
   }
   else {

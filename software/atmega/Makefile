@@ -41,14 +41,17 @@ test:
 	sudo $(AVRDUDE) $(AVRDUDEFLAGS) -v
 
 start:
-	sudo bash -c "echo 17 > /sys/class/gpio/export"
-	sudo bash -c "echo out > /sys/class/gpio/gpio17/direction"
-	sudo bash -c "echo 0 > /sys/class/gpio/gpio17/value; sleep 1"
-	sudo bash -c "echo 1 > /sys/class/gpio/gpio17/value"
+	sudo bash -c "echo 17 > /sys/class/gpio/export" || true
+	sudo bash -c "echo 22 > /sys/class/gpio/export" || true
+	sudo bash -c "echo out > /sys/class/gpio/gpio17/direction" || true
+	sudo bash -c "echo in > /sys/class/gpio/gpio22/direction" || true
+	sudo bash -c "echo 0 > /sys/class/gpio/gpio17/value; sleep 1" || true
+	sudo bash -c "echo 1 > /sys/class/gpio/gpio17/value" || true
 
 stop:
-	sudo bash -c "echo 0 > /sys/class/gpio/gpio17/value"
-	sudo bash -c "echo 17 > /sys/class/gpio/unexport"
+	sudo bash -c "echo 0 > /sys/class/gpio/gpio17/value" || true
+	sudo bash -c "echo 22 > /sys/class/gpio/unexport" || true
+	sudo bash -c "echo 17 > /sys/class/gpio/unexport" || true
 
 install_dependencies:
 	sudo apt-get install avrdude gcc-avr binutils-avr avr-libc

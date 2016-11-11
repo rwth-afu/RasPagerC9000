@@ -56,10 +56,9 @@ void loop() {
     }
     else {
       SET_OUTPUT(RASPI_SENDDATA);
+      uint8_t received_byte = UART::receive_byte();
+      fifo.push(received_byte);
     }
-
-    uint8_t received_byte = UART::receive_byte();
-    fifo.push(received_byte);
   }
 }
 
