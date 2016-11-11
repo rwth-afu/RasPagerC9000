@@ -121,13 +121,13 @@ public class Main {
 	}
 
 	// start scheduler (or search scheduler)
-	private static void startScheduler(boolean searching) {
+	private static void startScheduler() {
 		if (timer == null) {
 			timer = new Timer();
 			scheduler = new Scheduler(log);
 		}
 
-		timer.schedule(scheduler, 100, 100);
+		timer.schedule(scheduler, 0, 10);
 	}
 
 	// stop scheduler
@@ -154,8 +154,8 @@ public class Main {
 			server = new ServerThread(config.getPort(), messageQueue, log);
 		}
 
-		// start scheduler (not searching)
-		startScheduler(false);
+		// start scheduler
+		startScheduler();
 
 		// start server
 		server.start();
