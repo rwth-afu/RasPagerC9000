@@ -7,7 +7,7 @@
 #define UART_BAUDRATE 38400
 
 // Invert each bit before transmitting
-#define INVERT_BITS false
+#define INVERT_BITS true
 
 // LED_RED -> This pin drives the red LED
 #define LED_RED_DDR         DDRB

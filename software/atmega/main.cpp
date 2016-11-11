@@ -56,10 +56,9 @@ void loop() {
     }
     else {
       SET_OUTPUT(RASPI_SENDDATA);
+      uint8_t received_byte = UART::receive_byte();
+      fifo.push(received_byte);
     }
-
-    uint8_t received_byte = UART::receive_byte();
-    fifo.push(received_byte);
   }
 }
 
@@ -106,9 +105,7 @@ ISR(TIMER2_COMP_vect) {
     remaining_bits--;
   }
   else {
-    if (INVERT_BITS) { SET_OUTPUT(C9000_MDL); }
-    else { CLR_OUTPUT(C9000_MDL); }
-
+    SET_OUTPUT(C9000_MDL);
     CLR_OUTPUT(LED_YELLOW);
   }
 }
