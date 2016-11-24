@@ -2,14 +2,13 @@
 #include <stdlib.h>
 #include <util/atomic.h>
 
-uint16_t global_buffer[256];
+extern void panic();
 
 template <typename T>
 Fifo<T>::Fifo(uint16_t size) {
-  //this->buffer = (T*)malloc(size * sizeof(T));
-  this->buffer = (T*)global_buffer;
-  //this->size = size;
-  this->size = sizeof(global_buffer)/sizeof(T);
+  this->buffer = (T*)malloc(size * sizeof(T));
+  if (!buffer) panic();
+  this->size = size;
   this->head = this->tail = 0;
 }
 
@@ -74,6 +73,7 @@ void Fifo<T>::push(T value) {
   }
   else {
     // ERROR: Full buffer
+    panic();
   }
 }
 
@@ -86,6 +86,7 @@ T Fifo<T>::pop() {
   }
   else {
     // ERROR: empty buffer
+    panic();
     return 0;
   }
 }

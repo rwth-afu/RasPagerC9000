@@ -1,3 +1,4 @@
+
 #include "config.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -6,6 +7,8 @@
 
 #include "uart.h"
 #include "fifo.h"
+
+extern void panic();
 
 Fifo<uint8_t> fifo = Fifo<uint8_t>(256);
 
@@ -48,6 +51,7 @@ void loop() {
   // Stop receiving if the buffer is full
   if (!free_slots) {
     CLR_OUTPUT(RASPI_SENDDATA);
+    panic();
   }
   else {
     // Signal the PI to stop sending data if the buffer gets close to full
@@ -118,4 +122,21 @@ int main() {
 
   while (1) { loop(); }
   return 0;
+}
+
+void panic() {
+  INIT_OUTPUT(LED_RED);
+  INIT_OUTPUT(LED_YELLOW);
+  INIT_OUTPUT(LED_GREEN);
+
+  for (int i = 0; i < 100; i++) {
+    SET_OUTPUT(LED_RED);
+    SET_OUTPUT(LED_YELLOW);
+    SET_OUTPUT(LED_GREEN);
+    _delay_ms(50);
+    CLR_OUTPUT(LED_RED);
+    CLR_OUTPUT(LED_YELLOW);
+    CLR_OUTPUT(LED_GREEN);
+    _delay_ms(50);
+  }
 }

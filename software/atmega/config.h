@@ -67,4 +67,5 @@
 #define INIT_OUTPUT(signal)  {SET_BIT(signal##_DDR,  signal##_BIT);}
 #define SET_OUTPUT(signal)   {SET_BIT(signal##_PORT, signal##_BIT);}
 #define CLR_OUTPUT(signal)   {CLR_BIT(signal##_PORT, signal##_BIT);}
+#define TGL_OUTPUT(signal)   {TGL_BIT(signal##_PORT, signal##_BIT);}
 #define GET_INPUT(signal)    (GET_BIT(signal##_PIN,  signal##_BIT))
