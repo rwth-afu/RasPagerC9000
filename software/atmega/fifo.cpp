@@ -69,7 +69,9 @@ template <typename T>
 void Fifo<T>::push(T value) {
   if (!this->isFull()) {
     this->buffer[this->head] = value;
-    this->head = (this->head + 1) % this->size;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      this->head = (this->head + 1) % this->size;
+    }
   }
   else {
     // ERROR: Full buffer
@@ -81,7 +83,9 @@ template <typename T>
 T Fifo<T>::pop() {
   if (!this->isEmpty()) {
     T value = this->buffer[this->tail];
-    this->tail = (this->tail + 1) % this->size;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      this->tail = (this->tail + 1) % this->size;
+    }
     return value;
   }
   else {
