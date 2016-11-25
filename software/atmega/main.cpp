@@ -102,8 +102,9 @@ ISR(TIMER2_COMP_vect) {
       CLR_OUTPUT(LED_YELLOW);
     }
 
+    for (int i = 0; i < 8; i++) asm volatile("nop");
     SET_OUTPUT(C9000_MDE);
-    asm volatile("nop"); // short delay
+    for (int i = 0; i < 8; i++) asm volatile("nop");
     CLR_OUTPUT(C9000_MDE);
 
     remaining_bits--;
