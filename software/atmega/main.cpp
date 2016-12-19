@@ -15,7 +15,9 @@ Fifo<uint8_t> fifo = Fifo<uint8_t>(256);
 void timer_init() {
   // Initialize timer for 1200 Hz
   TCCR2 = (1 << WGM21) | (1 << CS22);
-  OCR2  = F_CPU / 64 / 1207;
+  //Possible Bug: 1027 results in OCR2=103, resulting in 1213 Hz
+  // Now let's try 1200 -> CCR2=104 -> 1201,92 Hz
+  OCR2  = F_CPU / 64 / 1200;
   TIMSK = (1 << OCIE2) | (1 << TOIE2);
 }
 
