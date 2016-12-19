@@ -95,30 +95,32 @@ class Scheduler extends TimerTask {
 
 	private void stillAllowed() {
 		try {
-			if (slots.isAllowed(time) && !messageQueue.isEmpty()) {
-				int currentSlot = TimeSlots.getIndex(time);
-				int count = slots.getCount(currentSlot);
-				if (updateData(count)) {
-					log.fine("Activating transmitter.");
-					try {
-						transmitter.send(codeWords);
-						log.fine("Data sent");
-					} catch (Throwable t) {
-						log.log(Level.SEVERE, "Failed to send data.", t);
-					} finally {
-						schedulerState = State.SLOT_STILL_ALLOWED;
-					}
+			if (slots.isAllowed(time)) {
+				if (!messageQueue.isEmpty()) {
+					int currentSlot = TimeSlots.getIndex(time);
+					int count = slots.getCount(currentSlot);
+					if (updateData(count)) {
+						log.fine("Activating transmitter.");
+						try {
+							transmitter.send(codeWords);
+							log.fine("Data sent");
+						} catch (Throwable t) {
+							log.log(Level.SEVERE, "Failed to send data.", t);
+						} finally {
+							schedulerState = State.SLOT_STILL_ALLOWED;
+						}
 
-					log.log(Level.FINE, "state = {0}", schedulerState);
-				} else {
-					schedulerState = State.AWAITING_SLOT;
+						//	log.log(Level.FINE, "state = {0}", schedulerState);
+					}
 				}
+			} else {
+					schedulerState = State.AWAITING_SLOT;
 			}
 		} catch (Throwable t) {
 			log.log(Level.SEVERE, "Failed to encode data.", t);
 			schedulerState = State.AWAITING_SLOT;
 		}
-		log.log(Level.FINE, "state = {0}", schedulerState);
+//		log.log(Level.FINE, "state = {0}", schedulerState);
 	}
 
 	/**

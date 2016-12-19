@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -27,27 +26,17 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Mixer;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.system.SystemInfo.BoardType;
 
 
 public class RasPagerWindow extends JFrame {
@@ -82,7 +71,7 @@ public class RasPagerWindow extends JFrame {
 		texts = ResourceBundle.getBundle("MainWindow");
 
 		// set window preferences
-		setTitle("FunkrufSlave");
+		setTitle("RasPagerC9000");
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

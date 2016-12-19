@@ -118,7 +118,7 @@ public final class C9000Transmitter implements Transmitter {
 				// SENDDATA (Pin 15, bzw 3) auslesen
 				if (this.pinSenddata.isHigh()) {
 					// HIGH -> Nchstes Byte senden
-					System.out.println("Sende nchstes Byte...");
+//					System.out.println("Sende naechstes Byte...");
 
 					try {
 						this.serial.write(inputData[i]);

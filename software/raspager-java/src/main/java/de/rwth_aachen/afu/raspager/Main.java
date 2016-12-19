@@ -38,9 +38,9 @@ public final class Main {
 	}
 
 	private static void printVersion() {
-		System.out.println("FunkrufSlave - Version 2.0.0");
-		System.out.println("by Ralf Wilke, Michael Delissen und Marvin Menzerath, powered by IHF RWTH Aachen");
-		System.out.println("New Versions at https://github.com/dh3wr/SDRPager/releases");
+		System.out.println("RasPagerC9000 - Version 1.0.0-RC1");
+		System.out.println("by Ralf Wilke, Michael Delissen, Marvin Menzerath and Phillip Thiel, powered by IHF RWTH Aachen");
+		System.out.println("New Versions at https://github.com/rwth-afu/RasPagerC9000/releases");
 		System.out.println();
 	}
 
