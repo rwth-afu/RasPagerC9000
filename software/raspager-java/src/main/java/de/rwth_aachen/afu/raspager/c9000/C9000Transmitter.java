@@ -105,6 +105,14 @@ public final class C9000Transmitter implements Transmitter {
 
 			// PTT (Pin 13, bzw 2) auf HIGH
 			this.pinPtt.high();
+			if (txDelay > 0) {
+				try {
+					Thread.sleep(txDelay);
+				} catch (Throwable t) {
+					log.log(Level.SEVERE, "Failed to wait for TX delay.", t);
+				}
+			}
+
 
 			// Warte 1ms
 			try {
