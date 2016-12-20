@@ -52,7 +52,8 @@ class Scheduler extends TimerTask {
 		if (canceled.get()) {
 			return;
 		}
-
+		// Once for all calculate where we are in time now and
+		// use this in all actions performed in this timer run
 		time = ((int) (System.currentTimeMillis() / 100) + delay) % MAX;
 
 		if (slots.hasChanged(time) && updateTimeSlotsHandler != null) {
@@ -130,20 +131,18 @@ class Scheduler extends TimerTask {
 	 *            Slot count.
 	 * @return Code words to send.
 	 */
-	private boolean updateData(int slotCount, boolean actualSlotIsComplete) {
+	private boolean updateData(int slotCount, boolean actualSlotRowIsComplete) {
 		if (slotCount <= 0) {
 			log.warning("Called updateData with slotCount <= 0.");
 			return false;
 		}
-		double dMaxBatch = 0.0;
 		int maxBatch = 0;
 
-		if (actualSlotIsComplete) {
+		if (actualSlotRowIsComplete) {
 			// Number of batches per complete slot:
 			// ((slotCount * slot time[s]) - praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
 			// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
-			dMaxBatch = ((6.40 * slotCount) - 0.48) * 1200 / 544;
-			maxBatch = (int) dMaxBatch;
+			maxBatch = (int) ((6.40 * slotCount) - 0.48) * 1200 / 544;
 			log.log(Level.FINE, "Actual slot complete, Count: {0}", slotCount);
 			// If there isn't space for a single batch left in this time slot row, quit with false
 			if (maxBatch <= 0) {
@@ -155,13 +154,14 @@ class Scheduler extends TimerTask {
 			// (((slotCount - 1) * slot time[s]) + Time_left_in_this_slot[s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
 
 			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
-			dMaxBatch = ((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544;
-			maxBatch = (int) dMaxBatch;
-			log.log(Level.FINE, "Actual slot incomplete, Count: {0}", slotCount);
+			maxBatch = (int) ((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544;
+			log.log(Level.FINE, String.format("Actual slot incomplete, Count: {0}, Time left in 0.1s:{1}",
+					slotCount, timeLeftInThisSlot_100MS));
 
 			// If there isn't space for a single batch left in this time slot row, quit with false
 			if (maxBatch <= 0) {
-				log.log(Level.FINE, "No more batches are fitting now, Value: {0}", maxBatch);
+				log.log(Level.FINE, String.format("No more batches are fitting now, Count: {0}, Time left in 0.1s: {1}",
+						slotCount, timeLeftInThisSlot_100MS));
 				return false;
 			}
 

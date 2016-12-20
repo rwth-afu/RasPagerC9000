@@ -101,7 +101,7 @@ public final class C9000Transmitter implements Transmitter {
 				throw new IllegalStateException("Not initialized");
 			}
 
-			System.out.println("Sende Daten...");
+//			System.out.println("Sende Daten...");
 
 			// PTT (Pin 13, bzw 2) auf HIGH
 			this.pinPtt.high();
@@ -154,7 +154,7 @@ public final class C9000Transmitter implements Transmitter {
 			// PTT auf LOW
 			this.pinPtt.low();
 
-			System.out.println("Daten gesendet.");
+//			System.out.println("Daten gesendet.");
 
 		}
 	}
