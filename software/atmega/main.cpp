@@ -13,12 +13,18 @@ extern void panic();
 Fifo<uint8_t> fifo = Fifo<uint8_t>(256);
 
 void timer_init() {
-  // Initialize timer for 1200 Hz
+/*  // Initialize timer for 1200 Hz
   TCCR2 = (1 << WGM21) | (1 << CS22);
-  //Possible Bug: 1027 results in OCR2=103, resulting in 1213 Hz
-  // Now let's try 1200 -> CCR2=104 -> 1201,92 Hz
-  OCR2  = F_CPU / 64 / 1200;
+  OCR2  = F_CPU / 64 / 1207;
   TIMSK = (1 << OCIE2) | (1 << TOIE2);
+*/
+  // Initialize timer 1 for 1200 Hz
+  // No Output on compare match, no PWM
+  TCCR1A = 0x00;
+  // Clear Timer on match, CPU-Clock as input
+  TCCR1B = (1 << WGM12) | (1 << CS10);
+  OCR1A = 6666;
+  TIMSK = (1 << OCIE1A);
 }
 
 void ports_init() {
@@ -71,7 +77,7 @@ void loop() {
 /**
  * 1200 Hz timer interrupt
  */
-ISR(TIMER2_COMP_vect) {
+ISR(TIMER1_COMPA_vect) {
   static uint8_t current_byte = 0;
   static uint8_t remaining_bits = 0;
 
