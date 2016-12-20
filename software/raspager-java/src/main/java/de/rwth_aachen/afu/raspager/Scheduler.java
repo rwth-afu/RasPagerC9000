@@ -143,7 +143,11 @@ class Scheduler extends TimerTask {
 			// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
 			maxBatch = (int) (((6.40 * slotCount) - 0.48) * 1200 / 544);
 			log.log(Level.FINE, "Actual slot complete, Count: {0}", slotCount);
-
+			// If there isn't space for a single batch left in this time slot row, quit with false
+			if (maxBatch <= 0) {
+				log.log(Level.SEVERE,"No more batches are fitting although it's a complete slot, Value: {0}", maxBatch);
+				return false;
+			}
 		} else {
 			// If first slot is not complete any more, because there was a transmission already in this slot
 			// (((slotCount - 1) * slot time[s]) + Time_left_in_this_slot[s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
@@ -151,6 +155,13 @@ class Scheduler extends TimerTask {
 			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
 			maxBatch = (int) (((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544);
 			log.log(Level.FINE, "Actual slot incomplete, Count: {0}", slotCount);
+
+			// If there isn't space for a single batch left in this time slot row, quit with false
+			if (maxBatch <= 0) {
+				log.log(Level.FINE, "No more batches are fitting now, Value: {0}", maxBatch);
+				return false;
+			}
+
 		}
 
 		// send batches
