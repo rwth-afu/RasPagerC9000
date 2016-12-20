@@ -77,7 +77,7 @@ class Scheduler extends TimerTask {
 			int currentSlot = TimeSlots.getIndex(time);
 			int count = slots.getCount(currentSlot);
 
-			if (updateData(count)) {
+			if (updateData(count, true)) {
 				log.fine("Activating transmitter.");
 				try {
 					transmitter.send(codeWords);
@@ -99,7 +99,7 @@ class Scheduler extends TimerTask {
 				if (!messageQueue.isEmpty()) {
 					int currentSlot = TimeSlots.getIndex(time);
 					int count = slots.getCount(currentSlot);
-					if (updateData(count)) {
+					if (updateData(count, false)) {
 						log.fine("Activating transmitter.");
 						try {
 							transmitter.send(codeWords);
@@ -130,24 +130,32 @@ class Scheduler extends TimerTask {
 	 *            Slot count.
 	 * @return Code words to send.
 	 */
-	private boolean updateData(int slotCount) {
+	private boolean updateData(int slotCount, boolean actualSlotIsComplete) {
 		if (slotCount <= 0) {
 			log.warning("Called updateData with slotCount <= 0.");
 			return false;
 		}
+		int maxBatch = 0;
+
+		if (actualSlotIsComplete) {
+			// Number of batches per complete slot:
+			// ((slotCount * slot time[s]) - praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
+			// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
+			maxBatch = (int) (((6.40 * slotCount) - 0.48) * 1200 / 544);
+			log.log(Level.FINE, "Actual slot complete, Count: {0}", slotCount);
+
+		} else {
+			// If first slot is not complete any more, because there was a transmission already in this slot
+			// (((slotCount - 1) * slot time[s]) + Time_left_in_this_slot[s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
+
+			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
+			maxBatch = (int) (((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544);
+			log.log(Level.FINE, "Actual slot incomplete, Count: {0}", slotCount);
+		}
 
 		// send batches
 
-		// Number of batches per complete slot:
-		// ((slotCount * slot time) - praeambel time - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
-		// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
-
-		// If first slot is not complete any more, because there was a transmission already in this slot
-		// (((slotCount - 1) * slot time) + Time in this solt left [s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
-
-		int timeLeftInThisSlot_MS = slots.getTimeToNextSlot(time);
-
-		int maxBatch = (int) (((6.40 * (slotCount - 1) + (timeLeftInThisSlot_MS / 10) - 0.48) * 1200 / 544));
+		log.log(Level.FINE, "MaxBatch = {0}", maxBatch);
 		int msgCount = 0;
 
 		codeWords = new ArrayList<>();
