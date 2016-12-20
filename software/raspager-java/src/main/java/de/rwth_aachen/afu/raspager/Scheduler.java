@@ -131,21 +131,34 @@ class Scheduler extends TimerTask {
 	 * @return Code words to send.
 	 */
 	private boolean updateData(int slotCount) {
+		if (slotCount <= 0) {
+			log.warning("Called updateData with slotCount <= 0.");
+			return false;
+		}
+
 		// send batches
-		// max batches per slot: (slot time - praeambel time) / bps / ((frames +
-		// (1 = sync)) * bits per frame)
-		// (3,75 - 0,48) * 1200 / ((16 + 1) * 32)
-		int maxBatch = (int) ((6.40 * slotCount - 0.48 - delay / 1000) * 1200 / 544);
+
+		// Number of batches per complete slot:
+		// ((slotCount * slot time) - praeambel time - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
+		// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
+
+		// If first slot is not complete any more, because there was a transmission already in this slot
+		// (((slotCount - 1) * slot time) + Time in this solt left [s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
+
+		int timeLeftInThisSlot_MS = slots.getTimeToNextSlot(time);
+
+		int maxBatch = (int) (((6.40 * (slotCount - 1) + (timeLeftInThisSlot_MS / 10) - 0.48) * 1200 / 544));
 		int msgCount = 0;
 
 		codeWords = new ArrayList<>();
 
-		// add praeembel
+		// add preambel
 		for (int i = 0; i < 18; i++) {
 			codeWords.add(Pocsag.PRAEAMBLE);
 		}
-
+		// get messages as long as message queue is not empty
 		while (!messageQueue.isEmpty()) {
+			// get message from queue
 			Message message = messageQueue.pop();
 
 			// get codewords and frame position
@@ -180,7 +193,6 @@ class Scheduler extends TimerTask {
 				if ((codeWords.size() - 18) % 17 == 0) {
 					codeWords.add(Pocsag.SYNC);
 				}
-
 				codeWords.add(cwBuf.get(c));
 			}
 

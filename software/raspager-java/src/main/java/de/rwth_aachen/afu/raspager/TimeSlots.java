@@ -159,6 +159,7 @@ final class TimeSlots {
 		return (getStartTimeForSlot(slot, time) + 1024);
 	}
 
+	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
 		int nextSlot = (getCurrent(time) + 1) % 16;
 		return (getStartTimeForSlot(nextSlot, time) - time);

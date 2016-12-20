@@ -161,6 +161,7 @@ final class ServerHandler extends SimpleChannelInboundHandler<String> {
 	 *            Request which contains the message.
 	 */
 	private void handleMessage(ChannelHandlerContext ctx, String request) {
+		log.log(Level.FINE, "Received msg: ", request);
 		try {
 			if (messageHandler != null) {
 				messageHandler.accept(new Message(request));
