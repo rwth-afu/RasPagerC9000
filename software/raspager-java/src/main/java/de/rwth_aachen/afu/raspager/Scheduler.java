@@ -182,6 +182,7 @@ class Scheduler extends TimerTask {
 		while (!messageQueue.isEmpty()) {
 			// get message from queue
 			Message message = messageQueue.pop();
+			log.log(Level.FINE, "Popped Message {0}", message.getText());
 
 			// get codewords and frame position
 			List<Integer> cwBuf = message.getCodeWords();
