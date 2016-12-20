@@ -25,7 +25,7 @@ public final class C9000Transmitter implements Transmitter {
 	private static final Logger log = Logger.getLogger(C9000Transmitter.class.getName());
 	private final Object lockObj = new Object();
 	private Serial serial;
-	private int txDelay = 0;
+//	private int txDelay = 0;
 
 	private GpioController gpio;
 	private GpioPinDigitalOutput pinAvr;
@@ -61,7 +61,7 @@ public final class C9000Transmitter implements Transmitter {
 	public void init(Configuration config) throws Exception {
 		synchronized (lockObj) {
 			close();
-			txDelay = config.getInt("txDelay", 0);
+//			txDelay = config.getInt("txDelay", 0);
 
 			System.out.println("Initialisiere C9000Communication...");
 
@@ -105,14 +105,16 @@ public final class C9000Transmitter implements Transmitter {
 
 			// PTT (Pin 13, bzw 2) auf HIGH
 			this.pinPtt.high();
-			if (txDelay > 0) {
+
+			// Erstmal kein TX Delay.
+/*			if (txDelay > 0) {
 				try {
 					Thread.sleep(txDelay);
 				} catch (Throwable t) {
 					log.log(Level.SEVERE, "Failed to wait for TX delay.", t);
 				}
 			}
-
+*/
 
 			// Warte 1ms
 			try {
@@ -125,7 +127,7 @@ public final class C9000Transmitter implements Transmitter {
 			for (int i = 0; i < inputData.length; i++) {
 				// SENDDATA (Pin 15, bzw 3) auslesen
 				if (this.pinSenddata.isHigh()) {
-					// HIGH -> Nchstes Byte senden
+					// HIGH -> Naechstes Byte senden
 //					System.out.println("Sende naechstes Byte...");
 
 					try {

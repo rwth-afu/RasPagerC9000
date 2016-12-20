@@ -253,7 +253,7 @@ public class RasPagerWindow extends JFrame {
 		masterListPane.setBounds(new Rectangle(12, 38, 150, 218));
 		configurationPanel.add(masterListPane);
 
-		// serial delay label
+/*		// serial delay label
 		JLabel serialDelayLabel = new JLabel(texts.getString("serialDelayLabel"));
 		serialDelayLabel.setBounds(174, 292, 50, 18);
 		configurationPanel.add(serialDelayLabel);
@@ -287,6 +287,7 @@ public class RasPagerWindow extends JFrame {
 		JLabel serialDelayMs = new JLabel("ms");
 		serialDelayMs.setBounds(317, 292, 40, 18);
 		configurationPanel.add(serialDelayMs);
+*/
 
 		// port bounds
 		Rectangle portBounds = new Rectangle(50, masterListBounds.y + masterListBounds.height + 15, 50, 18);
