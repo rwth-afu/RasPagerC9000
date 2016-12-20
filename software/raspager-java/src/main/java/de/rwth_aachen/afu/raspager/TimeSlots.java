@@ -115,7 +115,7 @@ final class TimeSlots {
 	 * @return True if the next slot will be active.
 	 */
 	public synchronized boolean isNextAllowed(int time) {
-		return get(getCurrent(time) + 1);
+		return get((getIndex(time) + 1) % 16);
 	}
 
 	/**
@@ -123,9 +123,9 @@ final class TimeSlots {
 	 * 
 	 * @param time
 	 *            Time value
-	 * @return Current slot as hex number.
+	 * @return Current slot as hex number as type char.
 	 */
-	public static char getCurrent(int time) {
+	public static char getCurrentSlotChar(int time) {
 		return Character.forDigit(getIndex(time), 16);
 	}
 
@@ -161,8 +161,7 @@ final class TimeSlots {
 
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
-		int nextSlot = (getCurrent(time) + 1) % 16;
+		int nextSlot = (getIndex(time) + 1) % 16;
 		return (getStartTimeForSlot(nextSlot, time) - time);
 	}
-
 }
