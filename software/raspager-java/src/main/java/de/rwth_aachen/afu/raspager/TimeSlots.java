@@ -4,6 +4,7 @@ final class TimeSlots {
 
 	private final boolean[] slots = new boolean[16];
 	private int lastSlotIndex = -1;
+	protected static final int MAX = 65536;
 
 	/**
 	 * Sets active slots based on string representation.
@@ -162,6 +163,6 @@ final class TimeSlots {
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
 		int nextSlot = (getIndex(time) + 1) % 16;
-		return (getStartTimeForSlot(nextSlot, time) - time);
+		return ((getStartTimeForSlot(nextSlot, time) - time) % MAX);
 	}
 }
