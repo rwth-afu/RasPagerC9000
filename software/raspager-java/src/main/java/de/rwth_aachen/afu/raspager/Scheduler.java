@@ -155,12 +155,12 @@ class Scheduler extends TimerTask {
 
 			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
 			maxBatch = (int) ((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544;
-			log.log(Level.FINE, String.format("Actual slot incomplete, Count: {0}, Time left in 0.1s:{1}",
+			log.log(Level.FINE, String.format("Actual slot incomplete, Count: %1$d, Time left in 0.1s: %2$d",
 					slotCount, timeLeftInThisSlot_100MS));
 
 			// If there isn't space for a single batch left in this time slot row, quit with false
 			if (maxBatch <= 0) {
-				log.log(Level.FINE, String.format("No more batches are fitting now, Count: {0}, Time left in 0.1s: {1}",
+				log.log(Level.FINE, String.format("No more batches are fitting now, Count: %1$d, Time left in 0.1s: %2$d",
 						slotCount, timeLeftInThisSlot_100MS));
 				return false;
 			}
@@ -225,7 +225,7 @@ class Scheduler extends TimerTask {
 		}
 
 		if (msgCount > 0) {
-			log.fine(String.format("Batches used: {0}/{1}", ((codeWords.size() - 18) / 17), maxBatch));
+			log.fine(String.format("Batches used: %1$d / %2$d", ((codeWords.size() - 18) / 17), maxBatch));
 			return true;
 		} else {
 			return false;
