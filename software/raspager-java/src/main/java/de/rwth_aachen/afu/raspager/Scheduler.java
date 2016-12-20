@@ -110,17 +110,17 @@ class Scheduler extends TimerTask {
 							schedulerState = State.SLOT_STILL_ALLOWED;
 						}
 
-						//	log.log(Level.FINE, "state = {0}", schedulerState);
+						log.log(Level.FINE, "state = {0}", schedulerState);
 					}
 				}
 			} else {
 					schedulerState = State.AWAITING_SLOT;
+					log.log(Level.FINE, "state = {0}", schedulerState);
 			}
 		} catch (Throwable t) {
 			log.log(Level.SEVERE, "Failed to encode data.", t);
 			schedulerState = State.AWAITING_SLOT;
 		}
-//		log.log(Level.FINE, "state = {0}", schedulerState);
 	}
 
 	/**
@@ -135,13 +135,15 @@ class Scheduler extends TimerTask {
 			log.warning("Called updateData with slotCount <= 0.");
 			return false;
 		}
+		double dMaxBatch = 0.0;
 		int maxBatch = 0;
 
 		if (actualSlotIsComplete) {
 			// Number of batches per complete slot:
 			// ((slotCount * slot time[s]) - praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
 			// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
-			maxBatch = (int) (((6.40 * slotCount) - 0.48) * 1200 / 544);
+			dMaxBatch = ((6.40 * slotCount) - 0.48) * 1200 / 544;
+			maxBatch = (int) dMaxBatch;
 			log.log(Level.FINE, "Actual slot complete, Count: {0}", slotCount);
 			// If there isn't space for a single batch left in this time slot row, quit with false
 			if (maxBatch <= 0) {
@@ -153,7 +155,8 @@ class Scheduler extends TimerTask {
 			// (((slotCount - 1) * slot time[s]) + Time_left_in_this_slot[s]- praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
 
 			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
-			maxBatch = (int) (((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544);
+			dMaxBatch = ((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544;
+			maxBatch = (int) dMaxBatch;
 			log.log(Level.FINE, "Actual slot incomplete, Count: {0}", slotCount);
 
 			// If there isn't space for a single batch left in this time slot row, quit with false

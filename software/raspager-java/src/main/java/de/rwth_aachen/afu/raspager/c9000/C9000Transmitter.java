@@ -137,7 +137,7 @@ public final class C9000Transmitter implements Transmitter {
 					}
 				} else {
 					// LOW -> Buffer voll -> Warten und erneut versuchen
-					System.out.println("Buffer voll. Warte...");
+//					System.out.println("Buffer voll. Warte...");
 
 					// Schritt wiederholen
 					i--;
