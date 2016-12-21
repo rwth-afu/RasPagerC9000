@@ -145,7 +145,7 @@ final class TimeSlots {
 		// **** IMPORTANT ****
 
 		// This means 16 timeslots need 102.4 seconds, not 60.
-		return ((int) (time / 64)) % 16;
+		return ((int) Math.floor((time % 1024) / 64));
 	}
 
 	public static int getNextIndex(int time) {
@@ -153,7 +153,7 @@ final class TimeSlots {
 	}
 
 	public static int getStartTimeForSlot(int slot, int time) {
-		double startTimeofSlotZero = (Math.floor(time / 1024) * 1024);
+		double startTimeofSlotZero = (Math.floor(time / 1024)) * 1024;
 		return (int) ((startTimeofSlotZero + (slot * 64)) % MAX);
 	}
 
@@ -164,11 +164,17 @@ final class TimeSlots {
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
 		int nextSlot = (getIndex(time) + 1) % 16;
+		System.out.println("Next Slot: " + nextSlot);
+		System.out.println("Current time: " + time);
+
 		int timedifference = getStartTimeForSlot(nextSlot, time) - time;
+		System.out.println("Time diff: " + timedifference);
+
 		// If the next slot is after a wrap around, add the MAX value
 		if (timedifference < 0) {
 			timedifference += MAX;
 		}
+		System.out.println("Time diff return : " + timedifference);
 		return timedifference;
 	}
 }
