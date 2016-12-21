@@ -163,11 +163,14 @@ final class TimeSlots {
 
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
-		int nextSlot = (getIndex(time) + 1) % 16;
+		int nextSlot = getIndex((time + 64) % MAX);
 		System.out.println("Next Slot: " + nextSlot);
 		System.out.println("Current time: " + time);
 
-		int timedifference = getStartTimeForSlot(nextSlot, time) - time;
+		int StartTimeNext = getStartTimeForSlot(nextSlot, time);
+		System.out.println("Start Time next: " + StartTimeNext);
+
+		int timedifference =  StartTimeNext - time;
 		System.out.println("Time diff: " + timedifference);
 
 		// If the next slot is after a wrap around, add the MAX value
