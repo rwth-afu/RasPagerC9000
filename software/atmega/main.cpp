@@ -129,7 +129,7 @@ ISR(TIMER1_COMPA_vect) {
     CLR_OUTPUT(LED_YELLOW);
   }
   // Check if we have to enable the reception again
-  count = fifo.getCount();
+  uint16_t count = fifo.getCount();
   if (count <= 120) {
 	// if it the count is 120 or below, enable reception again
 	reception_ok = true;
