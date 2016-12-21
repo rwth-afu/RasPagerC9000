@@ -148,13 +148,14 @@ final class TimeSlots {
 		return ((int) Math.floor((time % 1024) / 64));
 	}
 
-	public static int getNextIndex(int time) {
-		return (getIndex(time) + 1) % 16;
-	}
-
 	public static int getStartTimeForSlot(int slot, int time) {
 		double startTimeofSlotZero = (Math.floor(time / 1024)) * 1024;
 		return (int) ((startTimeofSlotZero + (slot * 64)) % MAX);
+	}
+
+	public static int getStartTimeForNextSlot(int time) {
+		int TimeInNextSlot = (time + 64) % MAX;
+		return (int) ((Math.floor(TimeInNextSlot / 1024)) * 1024);
 	}
 
 	public static int getEndTimeForSlot(int slot, int time) {
@@ -163,11 +164,9 @@ final class TimeSlots {
 
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
-		int nextSlot = getIndex((time + 64) % MAX);
-		System.out.println("Next Slot: " + nextSlot);
 		System.out.println("Current time: " + time);
 
-		int StartTimeNext = getStartTimeForSlot(nextSlot, time);
+		int StartTimeNext = getStartTimeForNextSlot(time);
 		System.out.println("Start Time next: " + StartTimeNext);
 
 		int timedifference =  StartTimeNext - time;
