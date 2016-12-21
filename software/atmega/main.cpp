@@ -11,6 +11,7 @@
 extern void panic();
 
 Fifo<uint8_t> fifo = Fifo<uint8_t>(256);
+static bool reception_ok = true;
 
 void timer_init() {
 /*  // Initialize timer for 1200 Hz
@@ -55,6 +56,7 @@ void ports_init() {
  */
 void loop() {
   uint16_t free_slots = fifo.getFreeSlots();
+  uint16_t count = fifo.getCount();
 
   // Stop receiving if the buffer is full
   if (!free_slots) {
@@ -62,14 +64,24 @@ void loop() {
     panic();
   }
   else {
-    // Signal the PI to stop sending data if the buffer gets close to full
-    if (free_slots < 16) {
-      CLR_OUTPUT(RASPI_SENDDATA);
-    }
-    else {
-      SET_OUTPUT(RASPI_SENDDATA);
-      uint8_t received_byte = UART::receive_byte();
-      fifo.push(received_byte);
+	if (reception_ok) {
+		SET_OUTPUT(RASPI_SENDDATA);
+		uint8_t received_byte = UART::receive_byte();
+		fifo.push(received_byte);
+		
+		if (count >= 125) {
+			// Signal the PI to stop sending data if the buffer gets close to full
+			CLR_OUTPUT(RASPI_SENDDATA);
+		}
+		if (count >= 160) {
+			reception_ok = false;
+		}
+	} else {
+		if (count <= 120) {
+			// if it the count is 120 or below, enable reception again
+			reception_ok = true
+			SET_OUTPUT(RASPI_SENDDATA);
+		}
     }
   }
 }
