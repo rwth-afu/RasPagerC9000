@@ -164,19 +164,13 @@ final class TimeSlots {
 
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
-		System.out.println("Current time: " + time);
-
 		int StartTimeNext = getStartTimeForNextSlot(time);
-		System.out.println("Start Time next: " + StartTimeNext);
-
 		int timedifference =  StartTimeNext - time;
-		System.out.println("Time diff: " + timedifference);
 
 		// If the next slot is after a wrap around, add the MAX value
 		if (timedifference < 0) {
 			timedifference += MAX;
 		}
-		System.out.println("Time diff return : " + timedifference);
 		return timedifference;
 	}
 }

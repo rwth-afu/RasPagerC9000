@@ -133,7 +133,7 @@ class Scheduler extends TimerTask {
 	 */
 	private boolean updateData(int slotCount, boolean actualSlotRowIsComplete) {
 		if (slotCount <= 0) {
-			log.warning("Called updateData with slotCount <= 0.");
+			log.warning("Called updateData with slotCount <= 0. Doesn't make sense.");
 			return false;
 		}
 		int maxBatch = 0;
@@ -143,8 +143,8 @@ class Scheduler extends TimerTask {
 			// ((slotCount * slot time[s]) - praeambel time[s] - txdelay [s]) / bps / ((frames + (1 = sync)) * bits per frame)
 			// Example: ((n x 6.4) - 0.48 - 0) * 1200 / ((16 + 1) * 32)
 			maxBatch = (int) ((6.40 * slotCount) - 0.48) * 1200 / 544;
-			log.log(Level.FINE, "Actual slot complete, Count: {0}", slotCount);
-			// If there isn't space for a single batch left in this time slot row, quit with false
+
+			// If there isn't space for a single batch left in this time slot row, quit with false and something went wrong
 			if (maxBatch <= 0) {
 				log.log(Level.SEVERE,"No more batches are fitting although it's a complete slot, Value: {0}", maxBatch);
 				return false;
@@ -155,16 +155,9 @@ class Scheduler extends TimerTask {
 
 			int timeLeftInThisSlot_100MS = slots.getTimeToNextSlot(time);
 			maxBatch = (int) ((6.40 * (slotCount - 1)) + (timeLeftInThisSlot_100MS / 10) - 0.48) * 1200 / 544;
-			log.log(Level.FINE, String.format("Actual slot incomplete, Count: %1$d, Time left in 0.1s: %2$d",
-					slotCount, timeLeftInThisSlot_100MS));
 
 			// If there isn't space for a single batch left in this time slot row, quit with false
-			if (maxBatch <= 0) {
-				log.log(Level.FINE, String.format("No more batches are fitting now, Count: %1$d, Time left in 0.1s: %2$d",
-						slotCount, timeLeftInThisSlot_100MS));
-				return false;
-			}
-
+			if (maxBatch <= 0) { return false; }
 		}
 
 		// send batches
@@ -182,7 +175,6 @@ class Scheduler extends TimerTask {
 		while (!messageQueue.isEmpty()) {
 			// get message from queue
 			Message message = messageQueue.pop();
-			log.log(Level.FINE, "Popped Message {0}", message.getText());
 
 			// get codewords and frame position
 			List<Integer> cwBuf = message.getCodeWords();

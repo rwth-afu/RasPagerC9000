@@ -63,8 +63,6 @@ public final class C9000Transmitter implements Transmitter {
 			close();
 //			txDelay = config.getInt("txDelay", 0);
 
-			System.out.println("Initialisiere C9000Communication...");
-
 			this.serial = SerialFactory.createInstance();
 			try {
 				serial.open(new SerialConfig().device(SerialPort.getDefaultPort()).baud(Baud._38400).parity(Parity.NONE).stopBits(StopBits._1));
@@ -81,9 +79,6 @@ public final class C9000Transmitter implements Transmitter {
 
 			this.pinSenddata = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, "SENDDATA", PinPullResistance.PULL_DOWN);
 			this.pinSenddata.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
-
-			System.out.println("DataSender initialisiert.");
-
 		}
 	}
 
@@ -101,48 +96,36 @@ public final class C9000Transmitter implements Transmitter {
 				throw new IllegalStateException("Not initialized");
 			}
 
-//			System.out.println("Sende Daten...");
-
-			// PTT (Pin 13, bzw 2) auf HIGH
+			// PTT (Pin 13, bzw 2) to HIGH to turn transmitter on
 			this.pinPtt.high();
 
-			// Erstmal kein TX Delay.
-/*			if (txDelay > 0) {
-				try {
-					Thread.sleep(txDelay);
-				} catch (Throwable t) {
-					log.log(Level.SEVERE, "Failed to wait for TX delay.", t);
-				}
-			}
-*/
-
-			// Warte 1ms
+			// Fixed txdelay for C9000 of 10 ms
 			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Thread.sleep(10);
+			} catch (Throwable t) {
+				log.log(Level.SEVERE, "Failed to wait for TX delay.", t);
 			}
 
-			// durch alle Bytes im Array loopen
-			for (int i = 0; i < inputData.length; i++) {
-				// SENDDATA (Pin 15, bzw 3) auslesen
-				if (this.pinSenddata.isHigh()) {
-					// HIGH -> Naechstes Byte senden
-//					System.out.println("Sende naechstes Byte...");
 
+			// Loop through all bytes of input data
+			for (int i = 0; i < inputData.length; i++) {
+				// Read SENDDATA (Pin 15, bzw 3)
+				if (this.pinSenddata.isHigh()) {
+					// HIGH -> Send next Byte
+//					System.out.println("Sende naechstes Byte...");
 					try {
 						this.serial.write(inputData[i]);
 					} catch (IllegalStateException | IOException e) {
 						e.printStackTrace();
 					}
 				} else {
-					// LOW -> Buffer voll -> Warten und erneut versuchen
+					// LOW -> Buffer full -> wait and try again
 //					System.out.println("Buffer voll. Warte...");
 
 					// Schritt wiederholen
 					i--;
 
-					// Warte 1ms
+					// Wait 1ms
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
@@ -151,11 +134,8 @@ public final class C9000Transmitter implements Transmitter {
 				}
 			}
 
-			// PTT auf LOW
+			// PTT to LOW to turn transmitter off
 			this.pinPtt.low();
-
-//			System.out.println("Daten gesendet.");
-
 		}
 	}
 
@@ -182,7 +162,6 @@ public final class C9000Transmitter implements Transmitter {
 				byteData[i * 4 + c] = (byte) (data.get(i) >>> (8 * (3 - c)));
 			}
 		}
-
 		return byteData;
 	}
 }

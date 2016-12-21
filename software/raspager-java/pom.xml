@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.rwth-aachen.afu</groupId>
 	<artifactId>raspager-c9000</artifactId>
-	<version>1.0.0-RC1</version>
+	<version>1.0.0-RC2</version>
 	<name>RasPager C9000</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
