@@ -106,32 +106,39 @@ public final class C9000Transmitter implements Transmitter {
 				log.log(Level.SEVERE, "Failed to wait for TX delay.", t);
 			}
 
-
+			int i = 0;
 			// Loop through all bytes of input data
-			for (int i = 0; i < inputData.length; i++) {
-				// Read SENDDATA (Pin 15, bzw 3)
-				if (this.pinSenddata.isHigh()) {
-					// HIGH -> Send next Byte
-//					System.out.println("Sende naechstes Byte...");
+			while (i < inputData.length) {
+				int BytesSentLastBulk = 0;
+
+				// Send max 40 Bytes
+				for (int j = 0; (j < 40) && ((i + j) < inputData.length); j++) {
+					BytesSentLastBulk++;
 					try {
-						this.serial.write(inputData[i]);
+						this.serial.write(inputData[i + j]);
 					} catch (IllegalStateException | IOException e) {
 						e.printStackTrace();
 					}
-				} else {
-					// LOW -> Buffer full -> wait and try again
-//					System.out.println("Buffer voll. Warte...");
+				}
 
-					// Schritt wiederholen
-					i--;
+				// Wait 10 ms
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 
-					// Wait 1ms
+				// Wait until
+				while (this.pinSenddata.isLow()) {
+					// Wait 1 ms
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+				// Increase i by the number of bytes just send
+				i = i + BytesSentLastBulk;
 			}
 
 			// PTT to LOW to turn transmitter off
