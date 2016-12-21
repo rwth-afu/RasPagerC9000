@@ -68,6 +68,7 @@ void loop() {
 		SET_OUTPUT(RASPI_SENDDATA);
 		uint8_t received_byte = UART::receive_byte();
 		fifo.push(received_byte);
+		count = fifo.getCount();
 		
 		if (count >= 125) {
 			// Signal the PI to stop sending data if the buffer gets close to full
@@ -75,12 +76,6 @@ void loop() {
 		}
 		if (count >= 160) {
 			reception_ok = false;
-		}
-	} else {
-		if (count <= 120) {
-			// if it the count is 120 or below, enable reception again
-			reception_ok = true
-			SET_OUTPUT(RASPI_SENDDATA);
 		}
     }
   }
@@ -132,6 +127,13 @@ ISR(TIMER1_COMPA_vect) {
   else {
     SET_OUTPUT(C9000_MDL);
     CLR_OUTPUT(LED_YELLOW);
+  }
+  // Check if we have to enable the reception again
+  count = fifo.getCount();
+  if (count <= 120) {
+	// if it the count is 120 or below, enable reception again
+	reception_ok = true;
+	SET_OUTPUT(RASPI_SENDDATA);
   }
 }
 
