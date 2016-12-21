@@ -155,7 +155,7 @@ final class TimeSlots {
 
 	public static int getStartTimeForNextSlot(int time) {
 		int TimeInNextSlot = (time + 64) % MAX;
-		return (int) ((Math.floor(TimeInNextSlot / 1024)) * 1024);
+		return TimeInNextSlot - (TimeInNextSlot % 64);
 	}
 
 	public static int getEndTimeForSlot(int slot, int time) {
