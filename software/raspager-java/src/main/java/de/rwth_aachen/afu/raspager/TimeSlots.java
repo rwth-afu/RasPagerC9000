@@ -153,11 +153,12 @@ final class TimeSlots {
 	}
 
 	public static int getStartTimeForSlot(int slot, int time) {
-		return ((time % 1024) + (slot * 64));
+		double startTimeofSlotZero = Math.floor(time / 1024);
+		return (int) ((startTimeofSlotZero + (slot * 64)) % MAX);
 	}
 
 	public static int getEndTimeForSlot(int slot, int time) {
-		return (getStartTimeForSlot(slot, time) + 1024);
+		return ((getStartTimeForSlot(slot, time) + 1023) % MAX);
 	}
 
 	// result in 0.1 s units
