@@ -163,6 +163,11 @@ final class TimeSlots {
 	// result in 0.1 s units
 	public static int getTimeToNextSlot(int time) {
 		int nextSlot = (getIndex(time) + 1) % 16;
-		return (Math.floorMod(getStartTimeForSlot(nextSlot, time) - time, MAX));
+		int timedifference = getStartTimeForSlot(nextSlot, time) - time;
+		// If the next slot is after a wrap around, add the MAX value
+		if (timedifference < 0) {
+			timedifference += MAX;
+		}
+		return timedifference;
 	}
 }
