@@ -87,7 +87,7 @@ public final class C9000Transmitter implements Transmitter {
 	 * Sendet die uebergebenen Daten ueber die serielle Schnittstelle.
 	 * Setzt dabei die passenden Pins und wartet auf einen freien Buffer an der Gegenstelle.
 	 *
-	 * @param inputData zu bertragende Daten
+	 * @param inputData zu uebertragende Daten
 	 */
 
 	public void send(byte[] inputData) {
@@ -109,6 +109,17 @@ public final class C9000Transmitter implements Transmitter {
 			int i = 0;
 			// Loop through all bytes of input data
 			while (i < inputData.length) {
+
+				// Wait until it's ok to send data
+				while (this.pinSenddata.isLow()) {
+					// Wait 1 ms
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
 				int BytesSentLastBulk = 0;
 
 				// Send max 40 Bytes
@@ -128,15 +139,6 @@ public final class C9000Transmitter implements Transmitter {
 					e.printStackTrace();
 				}
 
-				// Wait until
-				while (this.pinSenddata.isLow()) {
-					// Wait 1 ms
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
 				// Increase i by the number of bytes just send
 				i = i + BytesSentLastBulk;
 			}

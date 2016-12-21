@@ -65,7 +65,6 @@ void loop() {
   }
   else {
 	if (reception_ok) {
-		SET_OUTPUT(RASPI_SENDDATA);
 		uint8_t received_byte = UART::receive_byte();
 		fifo.push(received_byte);
 		count = fifo.getCount();
@@ -130,7 +129,7 @@ ISR(TIMER1_COMPA_vect) {
   }
   // Check if we have to enable the reception again
   uint16_t count = fifo.getCount();
-  if (count <= 120) {
+  if (count <= 70) {
 	// if it the count is 120 or below, enable reception again
 	reception_ok = true;
 	SET_OUTPUT(RASPI_SENDDATA);
