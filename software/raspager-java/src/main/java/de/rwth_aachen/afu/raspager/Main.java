@@ -38,8 +38,8 @@ public final class Main {
 	}
 
 	private static void printVersion() {
-		System.out.println("RasPagerC9000 - Version 1.0.0-RC2");
-		System.out.println("by Ralf Wilke, Michael Delissen, Marvin Menzerath and Phillip Thiel, powered by IHF RWTH Aachen");
+		System.out.println("RasPagerC9000 - Version 1.0.0");
+		System.out.println("by Ralf Wilke, Michael Delissen, Marvin Menzerath, Thomas Gatzweiler and Phillip Thiel, powered by IHF RWTH Aachen");
 		System.out.println("New Versions at https://github.com/rwth-afu/RasPagerC9000/releases");
 		System.out.println();
 	}
@@ -48,7 +48,7 @@ public final class Main {
 		Options opts = new Options();
 		opts.addOption("c", "config", true, "Configuration file to use.");
 		opts.addOption("h", "help", false, "Show this help.");
-		opts.addOption("v", "version", false, "Show version infomration.");
+		opts.addOption("v", "version", false, "Show version information.");
 		opts.addOption("s", "service", false, "Run as a service without a GUI.");
 		opts.addOption("notrayicon", false, "Disable tray icon.");
 

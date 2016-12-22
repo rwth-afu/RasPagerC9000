@@ -124,7 +124,7 @@ final class ServerHandler extends SimpleChannelInboundHandler<String> {
 		}
 
 		char type = request.charAt(0);
-		log.log(Level.FINE, "Received message of type: {0}", type);
+//		log.log(Level.FINE, "Received message of type: {0}", type);
 
 		switch (type) {
 		case '#':
@@ -248,7 +248,7 @@ final class ServerHandler extends SimpleChannelInboundHandler<String> {
 	 *            Time slot data.
 	 */
 	private void handleTimeSlots(ChannelHandlerContext ctx, String request) {
-		log.fine("TimeSlots");
+		log.fine("TimeSlots received, connection to Master is online.");
 		try {
 			if (timeSlotsHandler != null) {
 				String[] parts = request.split(":", 2);

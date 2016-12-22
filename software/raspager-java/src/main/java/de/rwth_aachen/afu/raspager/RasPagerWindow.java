@@ -120,7 +120,7 @@ public class RasPagerWindow extends JFrame {
 
 		// main panel
 		main = new JPanel(null);
-		main.setPreferredSize(new Dimension(840, 470));
+		main.setPreferredSize(new Dimension(640, 440));
 		main.setBounds(0, 0, WIDTH, HEIGHT);
 		getContentPane().add(main, BorderLayout.SOUTH);
 
@@ -226,14 +226,14 @@ public class RasPagerWindow extends JFrame {
 				startButton.setText(texts.getString("startButtonStop"));
 			}
 		});
-		startButton.setBounds(new Rectangle(675, 10, 150, 18));
+		startButton.setBounds(new Rectangle(475, 10, 150, 18));
 		main.add(startButton);
 
 		// configuration panel
 		JPanel configurationPanel = new JPanel(null);
 		configurationPanel.setBorder(new TitledBorder(null, texts.getString("configurationPanel"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		configurationPanel.setBounds(new Rectangle(200, 30, 625, 372));
+		configurationPanel.setBounds(new Rectangle(200, 30, 625, 352));
 		main.add(configurationPanel);
 
 		// master list bounds
@@ -332,7 +332,7 @@ public class RasPagerWindow extends JFrame {
 		applyButton.addActionListener((e) -> {
 			setConfig();
 		});
-		applyButton.setBounds(new Rectangle(12, 345, 130, 18));
+		applyButton.setBounds(new Rectangle(12, 325, 130, 18));
 		configurationPanel.add(applyButton);
 
 		configButtonBounds.x += configButtonBounds.width + 10;
@@ -358,7 +358,7 @@ public class RasPagerWindow extends JFrame {
 			}
 		});
 
-		loadButton.setBounds(new Rectangle(153, 345, 100, 18));
+		loadButton.setBounds(new Rectangle(153, 325, 100, 18));
 		configurationPanel.add(loadButton);
 
 		configButtonBounds.x += configButtonBounds.width + 10;
@@ -383,7 +383,7 @@ public class RasPagerWindow extends JFrame {
 			}
 		});
 
-		saveButton.setBounds(new Rectangle(265, 345, 110, 18));
+		saveButton.setBounds(new Rectangle(265, 325, 110, 18));
 		configurationPanel.add(saveButton);
 
 		JPanel masterPanel = new JPanel();
