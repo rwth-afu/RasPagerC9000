@@ -1,0 +1,5 @@
+There is a new software available. Please have a look at 
+
+https://github.com/rwth-afu/RustPager
+
+It does not need java and provides a web frontend to configure the transmitter. Very nice!
