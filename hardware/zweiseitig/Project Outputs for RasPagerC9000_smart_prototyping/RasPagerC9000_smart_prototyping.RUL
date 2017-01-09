@@ -1,0 +1,6 @@
+DRC Rules Export File for PCB: C:\Users\wilke\Documents\RasPagerC9000\hardware\RasPagerC9000_smart_prototyping.PcbDoc
+RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=6.00
+RuleKind=Width|RuleName=Width|Scope=Board|Minimum=6.00
+RuleKind=SolderMaskExpansion|RuleName=SolderMaskExpansion|Scope=Board|Minimum=4.00
+RuleKind=ShortCircuit|RuleName=ShortCircuit|Scope=Board|Allowed=0
+RuleKind=Clearance|RuleName=Clearance_Loetpad|Scope=Board|Minimum=19.69
