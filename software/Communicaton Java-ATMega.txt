@@ -1,10 +1,10 @@
 Ablauf der Kommunkation zwischen Java-Programm und ATMega auf Aufsteck-Platine.
 
-1. Init der RasPi Onboard UART mit 57,6 kBaud, 1 Stoppbit, keine Parität
+1. Init der RasPi Onboard UART mit 38,4 kBaud, 1 Stoppbit, keine Parität
 2. Wenn gesendet werden soll:
 3. PTT Leitung auf High
 4. Schleife
-5. Sende Byte mit Modulationsbits, MSB first über UART
+5. Sende 40 Byte mit Modulationsbits, MSB first über UART
 6. Warte 1 ms
 7. Lese SENDDATA Eingangspin am RasPi
 8. Wenn High, nächstes Byte senden
